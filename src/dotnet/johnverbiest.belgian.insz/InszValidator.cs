@@ -92,9 +92,17 @@ public class InszValidator: IInszValidator
         var baseString = input.Substring(0, input.Length - 2);
         var baseNumber = long.Parse(baseString);
         
+        // First check for dates before 2000
         if ((97 - (baseNumber % 97)) != checkNumber)
         {
-            validationResults.Add(ValidationError.ChecksumIsInvalid);
+            
+            // If that fails, add 2,000,000,000 and check again for dates after 2000
+            baseNumber = baseNumber + 2000000000;
+            if ((97 - (baseNumber % 97)) != checkNumber)
+            {               
+                validationResults.Add(ValidationError.ChecksumIsInvalid);
+            }
+
         }
     }
 

@@ -1,0 +1,97 @@
+﻿{
+  "name": "pre-2000 RN validator tests",
+  "description": "Working and failing Belgian Rijksregisternummer (pre-2000 rule only). No BIS or special cases included; all months are 01–12 and we avoid BIS offsets (+20/+40).",
+  "testCases": [
+    {
+      "input": "85061300178",
+      "expected": { "isValid": true },
+      "because": "Valid RN: 13/06/1985, seq 001 (odd), checksum uses pre-2000 rule."
+    },
+    {
+      "input": "79123100235",
+      "expected": { "isValid": true },
+      "because": "Valid RN: 31/12/1979, seq 002 (even), correct checksum (pre-2000)."
+    },
+    {
+      "input": "99010199789",
+      "expected": { "isValid": true },
+      "because": "Valid RN: 01/01/1999, seq 997 (odd), correct checksum (pre-2000)."
+    },
+    {
+      "input": "01022899840",
+      "expected": { "isValid": true },
+      "because": "Valid RN: 28/02/1901, seq 998 (even), correct checksum (pre-2000)."
+    },
+    {
+      "input": "80022800276",
+      "expected": { "isValid": true },
+      "because": "Valid RN: 28/02/1980, seq 002 (even), correct checksum (pre-2000)."
+    },
+    {
+      "input": "50113012307",
+      "expected": { "isValid": true },
+      "because": "Valid RN: 30/11/1950, seq 123 (odd), correct checksum (pre-2000)."
+    },
+
+    {
+      "input": "8506130017",
+      "expected": { "isValid": false },
+      "because": "Invalid length: only 10 digits (RN must be exactly 11 digits)."
+    },
+    {
+      "input": "850613001780",
+      "expected": { "isValid": false },
+      "because": "Invalid length: 12 digits (RN must be exactly 11 digits)."
+    },
+    {
+      "input": "8506130017A",
+      "expected": { "isValid": false },
+      "because": "Invalid character: contains a non-digit (letters are not allowed)."
+    },
+    {
+      "input": "99023100195",
+      "expected": { "isValid": false },
+      "because": "Invalid date: 31/02/1999 does not exist (checksum here would otherwise fit pre-2000)."
+    },
+    {
+      "input": "85131300130",
+      "expected": { "isValid": false },
+      "because": "Invalid month: 13 is outside 01–12 and not a BIS offset (so it's invalid for RN)."
+    },
+    {
+      "input": "85060000180",
+      "expected": { "isValid": false },
+      "because": "Invalid day: 00 is not a valid calendar day for RN."
+    },
+    {
+      "input": "99022900158",
+      "expected": { "isValid": false },
+      "because": "Invalid date: 29/02/1999 is not a leap day (1999 is not leap year)."
+    },
+    {
+      "input": "85113200128",
+      "expected": { "isValid": false },
+      "because": "Invalid day: 32 in November is not valid (and not a BIS administrative-day encoding)."
+    },
+    {
+      "input": "85061300079",
+      "expected": { "isValid": false },
+      "because": "Invalid sequence: 000 is not assigned for RN (even if checksum matches)."
+    },
+    {
+      "input": "85061399950",
+      "expected": { "isValid": false },
+      "because": "Invalid sequence: 999 is not assigned for RN (even if checksum matches)."
+    },
+    {
+      "input": "85061300179",
+      "expected": { "isValid": false },
+      "because": "Invalid checksum: digits base are fine but control digits are wrong for pre-2000."
+    },
+    {
+      "input": "85000000138",
+      "expected": { "isValid": false },
+      "because": "Invalid month: 00 is not allowed for RN (and we are not using BIS fallbacks)."
+    }
+  ]
+}

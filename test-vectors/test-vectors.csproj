@@ -33,6 +33,7 @@
         <WarningLevel>4</WarningLevel>
     </PropertyGroup>
     <ItemGroup>
+      <Content Include="post2000-rn-tests.json" />
       <Content Include="pre2000-rn-tests.json" />
       <Content Include="runner-tests.json" />
       <Content Include="README.md" />
