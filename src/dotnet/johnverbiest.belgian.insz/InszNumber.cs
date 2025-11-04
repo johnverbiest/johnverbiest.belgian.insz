@@ -3,7 +3,7 @@
 /// <summary>
 /// Represents a Belgian National Number (INSZ/NISS) and its properties
 /// </summary>
-public record Runner
+public record InszNumber
 {
 
 }
