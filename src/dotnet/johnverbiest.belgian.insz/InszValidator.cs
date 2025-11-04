@@ -8,7 +8,7 @@ namespace johnverbiest.belgian.insz;
 public class InszValidator: IInszValidator
 {
     /// <inheritdoc/>
-    public InszValidationResult Validate(long inszNumber) => Validate(inszNumber.ToString());
+    public InszValidationResult Validate(long inszNumber) => Validate(GetInszString(inszNumber));
 
     /// <inheritdoc/>
     public InszValidationResult Validate(InszNumber inszNumber) => Validate(inszNumber.Value);
@@ -75,9 +75,17 @@ public class InszValidator: IInszValidator
     
     internal static int GetDay(string inszString) => int.Parse(inszString.Substring(4, 2));
     internal static int GetSequenceNumber(string inszString) => int.Parse(inszString.Substring(6, 3));
+    internal static int GetCheckSum(string inszString) => int.Parse(inszString.Substring(9, 2));
     
-    internal static DateTime GetDate(string inszString) => new DateTime(GetYear(inszString), GetMonth(inszString), GetDay(inszString));
+    internal static string GetInszString(long inszNumber) => inszNumber.ToString("D11");
     
+    internal static DateTime GetDate(string inszString)
+    {
+        Console.WriteLine(inszString);
+        var test = $"{GetYear(inszString)}-{GetMonth(inszString)}-{GetDay(inszString)}";
+        return new DateTime(GetYear(inszString), GetMonth(inszString), GetDay(inszString), 12, 0, 0);
+    }
+
     private static void CheckCheckSumAndReturnBase(string input, List<ValidationError> validationResults)
     {
         var checkNumber = int.Parse(input.Substring(input.Length - 2, 2));
