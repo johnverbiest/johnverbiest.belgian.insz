@@ -1,0 +1,67 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "johnverbiest.belgian.insz", "johnverbiest.belgian.insz\johnverbiest.belgian.insz.csproj", "{001872DA-727E-43AF-9684-BD4D6A9E90E7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "johnverbiest.belgian.insz.tests", "johnverbiest.belgian.insz.tests\johnverbiest.belgian.insz.tests.csproj", "{F9A7B8C1-3D2E-4F5A-8B6C-1D2E3F4A5B6C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "johnverbiest.belgian.insz.tests.modern", "johnverbiest.belgian.insz.tests.modern\johnverbiest.belgian.insz.tests.modern.csproj", "{A1B2C3D4-5E6F-7A8B-9C0D-1E2F3A4B5C6D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "johnverbiest.belgian.insz.tests.framework481", "johnverbiest.belgian.insz.tests.framework481\johnverbiest.belgian.insz.tests.framework481.csproj", "{8A7BA48B-5C22-487F-BAD1-D50F68EF98F3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{D25C0341-6AD6-4386-8273-7EF708180B23}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{1A2D3944-6099-4B88-9D50-023A62463920}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "runners", "runners", "{66B5D16B-3938-4108-8C76-0486CFC4FBD0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Main", "Main", "{D7AF3108-90D2-447A-AF3B-4845A90DF768}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\AGENTS.md = ..\..\AGENTS.md
+		..\..\docs\BelgiumRegistryRules.md = ..\..\docs\BelgiumRegistryRules.md
+		..\..\README.md = ..\..\README.md
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F9A7B8C1-3D2E-4F5A-8B6C-1D2E3F4A5B6C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9A7B8C1-3D2E-4F5A-8B6C-1D2E3F4A5B6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F9A7B8C1-3D2E-4F5A-8B6C-1D2E3F4A5B6C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F9A7B8C1-3D2E-4F5A-8B6C-1D2E3F4A5B6C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A1B2C3D4-5E6F-7A8B-9C0D-1E2F3A4B5C6D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1B2C3D4-5E6F-7A8B-9C0D-1E2F3A4B5C6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1B2C3D4-5E6F-7A8B-9C0D-1E2F3A4B5C6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1B2C3D4-5E6F-7A8B-9C0D-1E2F3A4B5C6D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{001872DA-727E-43AF-9684-BD4D6A9E90E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{001872DA-727E-43AF-9684-BD4D6A9E90E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{001872DA-727E-43AF-9684-BD4D6A9E90E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{001872DA-727E-43AF-9684-BD4D6A9E90E7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F9A7B8C1-3D2E-4F5A-8B6C-1D2E3F4A5B6C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9A7B8C1-3D2E-4F5A-8B6C-1D2E3F4A5B6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F9A7B8C1-3D2E-4F5A-8B6C-1D2E3F4A5B6C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F9A7B8C1-3D2E-4F5A-8B6C-1D2E3F4A5B6C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8A7BA48B-5C22-487F-BAD1-D50F68EF98F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A7BA48B-5C22-487F-BAD1-D50F68EF98F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8A7BA48B-5C22-487F-BAD1-D50F68EF98F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8A7BA48B-5C22-487F-BAD1-D50F68EF98F3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{F9A7B8C1-3D2E-4F5A-8B6C-1D2E3F4A5B6C} = {1A2D3944-6099-4B88-9D50-023A62463920}
+		{66B5D16B-3938-4108-8C76-0486CFC4FBD0} = {1A2D3944-6099-4B88-9D50-023A62463920}
+		{8A7BA48B-5C22-487F-BAD1-D50F68EF98F3} = {66B5D16B-3938-4108-8C76-0486CFC4FBD0}
+		{A1B2C3D4-5E6F-7A8B-9C0D-1E2F3A4B5C6D} = {66B5D16B-3938-4108-8C76-0486CFC4FBD0}
+		{D7AF3108-90D2-447A-AF3B-4845A90DF768} = {D25C0341-6AD6-4386-8273-7EF708180B23}
+	EndGlobalSection
+EndGlobal

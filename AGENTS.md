@@ -12,96 +12,97 @@
 
 | Agent | Role | Language | Output | Trigger |
 |:------|:------|:----------|:--------|:---------|
-| `spec-guardian` | Maintains the normative rule spec | Markdown (gov sources only) | `docs/BelgiumRegistryRules.md` | Manual edits / official updates |
-| `vector-builder` | Generates and maintains test vectors | JSON | `conformance/vectors/*.json` | After rule change |
-| `dotnet-builder` | Builds and tests the .NET package | C# (.NET 8 +) | `nuget/Be.Identifiers.NationalNumber.*.nupkg` | On commit / tag |
-| `npm-builder` | Builds and tests the npm package | TypeScript (ES 2022) | `npm/dist/@be-identifiers/national-number` | On commit / tag |
-| `cross-tester` | Runs shared test vectors against both SDKs | Node + .NET | CI job | PR / Release candidate |
-| `publisher` | Publishes both artifacts when all tests pass | — | NuGet + npm registries | On `v*` tag |
+| `lib-builder` | Builds multi-target library | C# (.NET 8, 6, .NET Standard 2.0) | `bin/Debug/johnverbiest.belgian.insz.dll` (multi-target) | On commit |
+| `test-shared` | Shared test suite (Fact definitions) | C# (.NET Standard 2.0) | `src/dotnet/johnverbiest.belgian.insz.tests/` | Updated when test logic changes |
+| `test-modern-runner` | Runs tests on modern .NET versions | C# (net6.0, net8.0, net481) | xunit test results | `dotnet test johnverbiest.belgian.insz.tests.modern` |
+| `test-framework481-runner` | Runs tests on .NET Framework 4.8.1 | C# (.NET Framework 4.8.1) | xunit test results | Via legacy runner |
+| `publisher` | Publishes NuGet package when all tests pass | — | `Be.Identifiers.NationalNumber.*.nupkg` | On `v*` git tag |
 
 ---
 
 ## 📁 Repository Layout
 
 ```
-be-identifiers/
-├── docs/
-│   └── BelgiumRegistryRules.md           # Normative government-sourced specification
-├── conformance/
-│   └── vectors/
-│       ├── valid.json                    # ✅ Valid test cases
-│       ├── invalid.json                  # ❌ Invalid test cases
-│       └── edge.json                     # 🧪 Edge cases
+NationalNumber.Be.DotNet/
+├── AGENTS.md                             # This file
+├── README.md
 ├── src/
-│   ├── dotnet/
-│   │   ├── johnverbiest.belgian.insz.sln
-│   │   ├── johnverbiest.belgian.insz/johnverbiest.belgian.insz.csproj
-│   │   ├── johnverbiest.belgian.insz.tests/johnverbistest.belgian.insz.tests.csproj
-│   └── npm/
-│       ├── package.json
-│       ├── src/
-│       │   └── index.ts
-│       └── test/
-│           └── vectors.spec.ts
+│   └── dotnet/
+│       ├── johnverbiest.belgian.insz.sln
+│       ├── johnverbiest.belgian.insz/
+│       │   ├── johnverbiest.belgian.insz.csproj    # Multi-target lib (net8.0, net6.0, netstandard2.0)
+│       │   └── <All the code files>
+│       ├── johnverbiest.belgian.insz.tests/         # Shared test library (netstandard2.0)
+│       │   ├── johnverbiest.belgian.insz.tests.csproj
+│       │   └── SharedTests/
+│       │       └── <Test suites>
+│       ├── johnverbiest.belgian.insz.tests.modern/  # Test runner (net6.0, net8.0, net481)
+│       │   ├── johnverbiest.belgian.insz.tests.modern.csproj
+│       │   └── Links to SharedTests via <Compile Include>
+│       ├── johnverbiest.belgian.insz.tests.framework481/  # Legacy .NET Framework 4.8.1 runner
+│       │   ├── johnverbiest.belgian.insz.tests.framework481.csproj
+│       │   └── Links to SharedTests via <Compile Include>
+│       ├── packages/                     # NuGet packages for legacy runner
+│       └── README.md
 └── .github/
     └── workflows/
-        └── ci.yml
+        └── (CI/CD workflows if present)
 ```
 
 ---
 
 ## 🧩 Agent Specifications
 
-### **spec-guardian**
-- Watches `docs/BelgiumRegistryRules.md`.
-- Validates all external links (404 check) in CI.
-- Prevents merging of rule changes without proper source citations.
+### **lib-builder**
+- Builds the main library (`johnverbiest.belgian.insz`).
+- **Target Frameworks:**
+  - `.NET 8.0`
+  - `.NET 6.0`
+  - `.NET Standard 2.0` (for broad compatibility)
+- **Configuration:**
+  - Implicit usings enabled
+  - Nullable reference types enabled
+  - Latest C# language version
+- **Artifact:** Multi-target DLL with platform-specific optimizations.
 
-### **vector-builder**
-- Reads the spec, generates canonical examples:
-  - valid RN/BIS numbers with correct checksums and parity.
-  - invalid cases (wrong checksum, impossible dates, BIS offsets, etc.).
-- Writes to `conformance/vectors/`.
-- Exposes a helper script:  
+### **test-shared**
+- **Location:** `src/dotnet/johnverbiest.belgian.insz.tests/`
+- **Language:** C# (.NET Standard 2.0)
+- **Role:** Contains all test logic (`[Fact]` methods, test utilities).
+- **Configuration:**
+  - LangVersion: 9.0
+  - xunit 2.4.2
+- **How it works:** Other test runners link these tests via `<Compile Include>` without code duplication.
+
+### **test-modern-runner**
+- **Location:** `src/dotnet/johnverbiest.belgian.insz.tests.modern/`
+- **Target Frameworks:** `net6.0`, `net8.0`, `net481`
+- **Framework:** xunit 2.5.3 with Microsoft.NET.Test.Sdk 17.10.0
+- **Test Execution:**
   ```bash
-  pnpm run generate:vectors
-  dotnet run --project tools/VectorBuilder
+  dotnet test src/dotnet/johnverbiest.belgian.insz.tests.modern
   ```
+- **Linking:** Tests linked from `johnverbiest.belgian.insz.tests/SharedTests/**/*.cs` via project file `<Compile Include>`.
 
-### **npm-builder**
-- Language: **TypeScript 5 + ES 2022**
-- Package name: **`@be-identifiers/national-number`**
-- Responsibilities:
-  - Same logic as C# version (functional parity).
-  - Exports:
-    ```ts
-    export function isValid(input: string): boolean;
-    export function tryParse(input: string): Parsed | null;
-    ```
-  - Test suite (`Vitest` or `Jest`) loads the same JSON vectors for validation.
-  - Bundled via `tsup` / `rollup` → ES module.
-- NPM metadata:
-  - `author`: "Be Identifiers Project"
-  - `license`: "MIT"
-  - `repository`: "github:<you>/be-identifiers"
-  - `files`: `["dist", "LICENSE", "README.md"]`
-
-### **cross-tester**
-- Runs after both test suites pass.
-- Uses Node’s `child_process` to call:
+### **test-framework481-runner**
+- **Location:** `src/dotnet/johnverbiest.belgian.insz.tests.framework481/`
+- **Target Framework:** `.NET Framework 4.8.1` (legacy)
+- **Package References:** xunit 2.1.0 (via `packages.config`)
+- **Dependencies:** Resolved from `packages/` folder.
+- **Test Execution:**
   ```bash
-  dotnet test src/dotnet
-  npm test --prefix src/npm
+  cd src/dotnet
+  msbuild johnverbiest.belgian.insz.tests.framework481/johnverbiest.belgian.insz.tests.framework481.csproj /t:Build /t:Test
   ```
-- Then compares outputs from both SDKs for every entry in `valid.json` and `invalid.json` to assert parity.
+- **Note:** Provides backward compatibility for legacy .NET Framework users.
 
 ### **publisher**
-- Trigger: git tag starting with `v`.
-- Steps:
-  1. Run `cross-tester`.
-  2. If green → publish:
-     - `.NET`: `dotnet nuget push **/*.nupkg --api-key $NUGET_KEY`
-     - `npm`: `npm publish --access public`
-  3. Create GitHub Release with changelog and links to both packages.
+- **Trigger:** Git tag matching `v*` (e.g., `v1.0.0`).
+- **Steps:**
+  1. Run `dotnet test src/dotnet` (all runners execute).
+  2. If all tests pass:
+     - Build: `dotnet pack src/dotnet/johnverbiest.belgian.insz/johnverbiest.belgian.insz.csproj`
+     - Publish: `dotnet nuget push **/*.nupkg --api-key $NUGET_KEY --source https://api.nuget.org/v3/index.json`
+  3. Create GitHub Release with package metadata and links.
 
 ---
