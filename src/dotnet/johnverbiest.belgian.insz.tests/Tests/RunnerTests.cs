@@ -2,7 +2,7 @@
 using Xunit;
 using Xunit.Abstractions;
 
-namespace johnverbiest.belgian.insz.tests.SystemTests
+namespace johnverbiest.belgian.insz.tests.Tests
 {
     public class RunnerTests
     {
@@ -26,9 +26,6 @@ namespace johnverbiest.belgian.insz.tests.SystemTests
             _output.WriteLine($"Testing case: {testCase?.Input ?? "null"}");
             _output.WriteLine($"Expected valid: {testCase?.Expected?.IsValid?.ToString() ?? "null"}");
             _output.WriteLine($"Because: {testCase?.Because ?? "no reason given"}");
-            
-            // Your test implementation here
-            // Assert.Equal(testCase.Expected.IsValid, runner.IsValid);
         }
     }
 }
