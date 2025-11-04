@@ -1,96 +1,240 @@
 ﻿{
-  "name": "pre-2000 RN validator tests",
-  "description": "Working and failing Belgian Rijksregisternummer (pre-2000 rule only). No BIS or special cases included; all months are 01–12 and we avoid BIS offsets (+20/+40).",
+  "name": "post-2000 RN validator tests",
+  "description": "Working and failing Belgian Rijksregisternummer (post-2000 rule). No BIS or special cases included; all months are 01–12 and we avoid BIS offsets (+20/+40). Uses post-2000 checksum calculation with 2-prefix.",
   "testCases": [
     {
-      "input": "85061300178",
-      "expected": { "isValid": true },
-      "because": "Valid RN: 13/06/1985, seq 001 (odd), checksum uses pre-2000 rule."
+      "testName": "Valid male RN 2005",
+      "testDescription": "Checks a normal male RN born 13 June 2005 with valid checksum (post-2000 rule).",
+      "input": "05061300176",
+      "expected": {
+        "isValid": true,
+        "isBis": false,
+        "birthDate": "2005-06-13",
+        "birthYear": 2005,
+        "sex": "M"
+      },
+      "because": "Valid RN: 13/06/2005, seq 001 (odd), checksum uses post-2000 rule (2-prefix)."
     },
     {
-      "input": "79123100235",
-      "expected": { "isValid": true },
-      "because": "Valid RN: 31/12/1979, seq 002 (even), correct checksum (pre-2000)."
+      "testName": "Valid female RN 2010",
+      "testDescription": "Checks a normal female RN born 31 December 2010 with valid checksum (even sequence).",
+      "input": "10123100270",
+      "expected": {
+        "isValid": true,
+        "isBis": false,
+        "birthDate": "2010-12-31",
+        "birthYear": 2010,
+        "sex": "F"
+      },
+      "because": "Valid RN: 31/12/2010, seq 002 (even), correct checksum (post-2000)."
     },
     {
-      "input": "99010199789",
-      "expected": { "isValid": true },
-      "because": "Valid RN: 01/01/1999, seq 997 (odd), correct checksum (pre-2000)."
+      "testName": "Valid male RN 2023",
+      "testDescription": "Recent date test to ensure checksum uses post-2000 rule.",
+      "input": "23010199774",
+      "expected": {
+        "isValid": true,
+        "isBis": false,
+        "birthDate": "2023-01-01",
+        "birthYear": 2023,
+        "sex": "M"
+      },
+      "because": "Valid RN: 01/01/2023, seq 997 (odd), correct checksum (post-2000)."
     },
     {
-      "input": "01022899840",
-      "expected": { "isValid": true },
-      "because": "Valid RN: 28/02/1901, seq 998 (even), correct checksum (pre-2000)."
+      "testName": "Valid female RN 2000",
+      "testDescription": "Boundary test for year 2000 to ensure checksum uses post-2000 rule.",
+      "input": "00022899848",
+      "expected": {
+        "isValid": true,
+        "isBis": false,
+        "birthDate": "2000-02-28",
+        "birthYear": 2000,
+        "sex": "F"
+      },
+      "because": "Valid RN: 28/02/2000, seq 998 (even), correct checksum (post-2000)."
     },
     {
-      "input": "80022800276",
-      "expected": { "isValid": true },
-      "because": "Valid RN: 28/02/1980, seq 002 (even), correct checksum (pre-2000)."
+      "testName": "Valid leap year RN 2020",
+      "testDescription": "Leap year date (2020) to confirm date validation correctly handles leap day.",
+      "input": "20022900276",
+      "expected": {
+        "isValid": true,
+        "isBis": false,
+        "birthDate": "2020-02-29",
+        "birthYear": 2020,
+        "sex": "F"
+      },
+      "because": "Valid RN: 29/02/2020, seq 002 (even), correct checksum (post-2000)."
     },
     {
-      "input": "50113012307",
-      "expected": { "isValid": true },
-      "because": "Valid RN: 30/11/1950, seq 123 (odd), correct checksum (pre-2000)."
+      "testName": "Valid male RN 2015",
+      "testDescription": "Mid-range RN to confirm consistent checksum and parity logic.",
+      "input": "15113012377",
+      "expected": {
+        "isValid": true,
+        "isBis": false,
+        "birthDate": "2015-11-30",
+        "birthYear": 2015,
+        "sex": "M"
+      },
+      "because": "Valid RN: 30/11/2015, seq 123 (odd), correct checksum (post-2000)."
     },
 
     {
-      "input": "8506130017",
-      "expected": { "isValid": false },
+      "testName": "Invalid short length",
+      "testDescription": "Detects inputs shorter than 11 digits.",
+      "input": "0506130016",
+      "expected": {
+        "isValid": false,
+        "isBis": false,
+        "birthDate": null,
+        "birthYear": null,
+        "sex": null
+      },
       "because": "Invalid length: only 10 digits (RN must be exactly 11 digits)."
     },
     {
-      "input": "850613001780",
-      "expected": { "isValid": false },
+      "testName": "Invalid long length",
+      "testDescription": "Detects inputs longer than 11 digits.",
+      "input": "050613001610",
+      "expected": {
+        "isValid": false,
+        "isBis": false,
+        "birthDate": null,
+        "birthYear": null,
+        "sex": null
+      },
       "because": "Invalid length: 12 digits (RN must be exactly 11 digits)."
     },
     {
-      "input": "8506130017A",
-      "expected": { "isValid": false },
+      "testName": "Invalid character non-digit",
+      "testDescription": "Ensures only digits are accepted.",
+      "input": "0506130016A",
+      "expected": {
+        "isValid": false,
+        "isBis": false,
+        "birthDate": null,
+        "birthYear": null,
+        "sex": null
+      },
       "because": "Invalid character: contains a non-digit (letters are not allowed)."
     },
     {
-      "input": "99023100195",
-      "expected": { "isValid": false },
-      "because": "Invalid date: 31/02/1999 does not exist (checksum here would otherwise fit pre-2000)."
+      "testName": "Invalid date Feb 31",
+      "testDescription": "Rejects impossible calendar dates.",
+      "input": "20023100178",
+      "expected": {
+        "isValid": false,
+        "isBis": false,
+        "birthDate": "2020-02-31",
+        "birthYear": 2020,
+        "sex": "M"
+      },
+      "because": "Invalid date: 31/02/2020 does not exist."
     },
     {
-      "input": "85131300130",
-      "expected": { "isValid": false },
-      "because": "Invalid month: 13 is outside 01–12 and not a BIS offset (so it's invalid for RN)."
+      "testName": "Invalid month 13",
+      "testDescription": "Rejects month values outside 01–12 (non-BIS).",
+      "input": "05131300113",
+      "expected": {
+        "isValid": false,
+        "isBis": false,
+        "birthDate": "2005-13-13",
+        "birthYear": 2005,
+        "sex": "M"
+      },
+      "because": "Invalid month: 13 is outside 01–12 and not a BIS offset."
     },
     {
-      "input": "85060000180",
-      "expected": { "isValid": false },
+      "testName": "Invalid day 00",
+      "testDescription": "Rejects zero day values.",
+      "input": "05060000163",
+      "expected": {
+        "isValid": false,
+        "isBis": false,
+        "birthDate": "2005-06-00",
+        "birthYear": 2005,
+        "sex": "M"
+      },
       "because": "Invalid day: 00 is not a valid calendar day for RN."
     },
     {
-      "input": "99022900158",
-      "expected": { "isValid": false },
-      "because": "Invalid date: 29/02/1999 is not a leap day (1999 is not leap year)."
+      "testName": "Invalid date non-leap year",
+      "testDescription": "Rejects February 29th on non-leap years.",
+      "input": "19022900141",
+      "expected": {
+        "isValid": false,
+        "isBis": false,
+        "birthDate": "2019-02-29",
+        "birthYear": 2019,
+        "sex": "M"
+      },
+      "because": "Invalid date: 29/02/2019 is not a leap day (2019 not leap year)."
     },
     {
-      "input": "85113200128",
-      "expected": { "isValid": false },
-      "because": "Invalid day: 32 in November is not valid (and not a BIS administrative-day encoding)."
+      "testName": "Invalid day 32",
+      "testDescription": "Rejects out-of-range day values (no admin-day use).",
+      "input": "05113200111",
+      "expected": {
+        "isValid": false,
+        "isBis": false,
+        "birthDate": "2005-11-32",
+        "birthYear": 2005,
+        "sex": "M"
+      },
+      "because": "Invalid day: 32 in November is not valid and not an admin-day encoding."
     },
     {
-      "input": "85061300079",
-      "expected": { "isValid": false },
-      "because": "Invalid sequence: 000 is not assigned for RN (even if checksum matches)."
+      "testName": "Invalid sequence 000",
+      "testDescription": "Sequence 000 is unassigned.",
+      "input": "05061300062",
+      "expected": {
+        "isValid": false,
+        "isBis": false,
+        "birthDate": "2005-06-13",
+        "birthYear": 2005,
+        "sex": null
+      },
+      "because": "Invalid sequence: 000 is not assigned for RN."
     },
     {
-      "input": "85061399950",
-      "expected": { "isValid": false },
-      "because": "Invalid sequence: 999 is not assigned for RN (even if checksum matches)."
+      "testName": "Invalid sequence 999",
+      "testDescription": "Sequence 999 is reserved and invalid.",
+      "input": "05061399933",
+      "expected": {
+        "isValid": false,
+        "isBis": false,
+        "birthDate": "2005-06-13",
+        "birthYear": 2005,
+        "sex": null
+      },
+      "because": "Invalid sequence: 999 is not assigned for RN."
     },
     {
-      "input": "85061300179",
-      "expected": { "isValid": false },
-      "because": "Invalid checksum: digits base are fine but control digits are wrong for pre-2000."
+      "testName": "Invalid checksum",
+      "testDescription": "Correct date and sequence but wrong modulo-97 checksum.",
+      "input": "05061300162",
+      "expected": {
+        "isValid": false,
+        "isBis": false,
+        "birthDate": "2005-06-13",
+        "birthYear": 2005,
+        "sex": "M"
+      },
+      "because": "Invalid checksum: digits base are fine but control digits are wrong."
     },
     {
-      "input": "85000000138",
-      "expected": { "isValid": false },
+      "testName": "Invalid month 00",
+      "testDescription": "Rejects month zero for RN (no BIS offset).",
+      "input": "05000000121",
+      "expected": {
+        "isValid": false,
+        "isBis": false,
+        "birthDate": "2005-00-00",
+        "birthYear": 2005,
+        "sex": "M"
+      },
       "because": "Invalid month: 00 is not allowed for RN (and we are not using BIS fallbacks)."
     }
   ]

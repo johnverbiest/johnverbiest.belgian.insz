@@ -1,0 +1,152 @@
+﻿{
+    "name": "post-2000 BIS validator tests",
+    "description": "BIS numbers (post-2000 rule). Adds isBis, birthDate, birthYear and sex. Each case follows the 1991 KB structure and checksum (Art.4, with 2-prefix).",
+    "testCases": [
+    {
+        "testName": "Valid — known date, sex known (female): month = base+40, even seq",
+        "testDescription": "2003-07-14 ⇒ YY=03, MM=47, DD=14; female ⇒ even seq.",
+        "input": "03471400296",
+        "expected": {
+            "isValid": true,
+            "isBis": true,
+            "birthDate": "2003-07-14",
+            "birthYear": 2003,
+            "sex": "F"
+        },
+        "because": "Art.2 (+40 for sex known), Art.3 (even seq = female), post-2000 checksum OK."
+    },
+    {
+        "testName": "Valid — known date, sex known (male): month = base+40, odd seq",
+        "testDescription": "2001-01-09 ⇒ YY=01, MM=41, DD=09; male ⇒ odd seq.",
+        "input": "01410900166",
+        "expected": {
+            "isValid": true,
+            "isBis": true,
+            "birthDate": "2001-01-09",
+            "birthYear": 2001,
+            "sex": "M"
+        },
+        "because": "Art.2 (+40), Art.3 (odd seq = male)."
+    },
+    {
+        "testName": "Valid — known date, sex unknown (+20 month)",
+        "testDescription": "2012-02-28 ⇒ YY=12, MM=22, DD=28; sex unknown ⇒ +20.",
+        "input": "12222800575",
+        "expected": {
+            "isValid": true,
+            "isBis": true,
+            "birthDate": "2012-02-28",
+            "birthYear": 2012,
+            "sex": null
+        },
+        "because": "Art.2 (+20 when sex unknown)."
+    },
+
+    {
+        "testName": "Valid — unknown day/month, sex known (Art.5 form)",
+        "testDescription": "YY ‘4’ 000 pattern; sex known (female).",
+        "input": "05400000224",
+        "expected": {
+            "isValid": true,
+            "isBis": true,
+            "birthDate": null,
+            "birthYear": 2005,
+            "sex": "F"
+        },
+        "because": "Art.5: YY=05, marker ‘4’ (sex known), rest 000; even seq (female)."
+    },
+    {
+        "testName": "Valid — unknown day/month, sex unknown (Art.5 form)",
+        "testDescription": "YY ‘2’ 000 pattern; sex unknown.",
+        "input": "19200000578",
+        "expected": {
+            "isValid": true,
+            "isBis": true,
+            "birthDate": null,
+            "birthYear": 2019,
+            "sex": null
+        },
+        "because": "Art.5: YY=19, marker ‘2’ (sex unknown)."
+    },
+
+    {
+        "testName": "Valid — unknown year, sex known (Art.5 form)",
+        "testDescription": "00 4 00 1 pattern; sex known (female).",
+        "input": "00400100877",
+        "expected": {
+            "isValid": true,
+            "isBis": true,
+            "birthDate": null,
+            "birthYear": null,
+            "sex": "F"
+        },
+        "because": "Art.5 unknown-year form (00 4 00 1), female (even seq)."
+    },
+    {
+        "testName": "Valid — unknown year, sex unknown (Art.5 form)",
+        "testDescription": "00 2 00 1 pattern; sex unknown.",
+        "input": "00200100339",
+        "expected": {
+            "isValid": true,
+            "isBis": true,
+            "birthDate": null,
+            "birthYear": null,
+            "sex": null
+        },
+        "because": "Art.5 unknown-year form (00 2 00 1)."
+    },
+
+    {
+        "testName": "Invalid — checksum mismatch (post-2000 rule)",
+        "testDescription": "Same as a valid case but wrong control digits.",
+        "input": "03471400297",
+        "expected": {
+            "isValid": false,
+            "isBis": true,
+            "birthDate": "2003-07-14",
+            "birthYear": 2003,
+            "sex": "F"
+        },
+        "because": "Fails Art.4 checksum."
+    },
+    {
+        "testName": "Invalid — impossible month value 13",
+        "testDescription": "Month 13 outside BIS ranges.",
+        "input": "01130900164",
+        "expected": {
+            "isValid": false,
+            "isBis": true,
+            "birthDate": "2001-13-09",
+            "birthYear": 2001,
+            "sex": "M"
+        },
+        "because": "Month outside BIS ranges (Art.2)."
+    },
+    {
+        "testName": "Invalid — misused Art.5 marker",
+        "testDescription": "For unknown day/month, positions 4–6 must be 000.",
+        "input": "05400100291",
+        "expected": {
+            "isValid": false,
+            "isBis": true,
+            "birthDate": null,
+            "birthYear": 2005,
+            "sex": "F"
+        },
+        "because": "Violates Art.5: YY [4|2] 000 required."
+    },
+    {
+        "testName": "Invalid — bogus Art.5 marker digit",
+        "testDescription": "Third digit must be ‘4’ (sex known) or ‘2’ (sex unknown).",
+        "input": "05300000152",
+        "expected": {
+            "isValid": false,
+            "isBis": true,
+            "birthDate": null,
+            "birthYear": 2005,
+            "sex": "M"
+        },
+        "because": "Violates Art.5 marker rule."
+    }
+]
+}

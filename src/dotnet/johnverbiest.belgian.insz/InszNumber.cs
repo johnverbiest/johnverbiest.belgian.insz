@@ -35,6 +35,6 @@ public record InszNumber
     
     public string? ToFormattedString() => IsValid == true ? _formattedString.Value : null; 
 
-    public DateTime? BirthDate => IsValid == true ? _birthDate.Value : null;
+    public DateTime? BirthDate => IsValid == true ? null : null;
 }
 

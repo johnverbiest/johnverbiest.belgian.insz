@@ -1,0 +1,191 @@
+﻿{
+  "name": "pre-2000 BIS validator tests",
+  "description": "BIS numbers (pre-2000 rule). Covers known date (sex known/unknown), Article 5 unknown-day/month encoding, and Article 5 unknown-year encoding. Includes structural and checksum failures.",
+  "testCases": [
+    {
+      "testName": "Valid — known date, sex known (female): month = base+40, even seq",
+      "testDescription": "1987-12-15 encoded as YY=87, MM=12+40=52, DD=15; sex known ⇒ use +40; female ⇒ even sequence number.",
+      "input": "87521500290",
+      "expected": {
+        "isValid": true,
+        "isBis": true,
+        "birthDate": "1987-12-15",
+        "birthYear": 1987,
+        "sex": "F"
+      },
+      "because": "Art.2 (+40 when sex known) and Art.3 (even seq for female). Checksum OK."
+    },
+    {
+      "testName": "Valid — known date, sex known (male): month = base+40, odd seq",
+      "testDescription": "1987-12-15 encoded as 87 52 15; male ⇒ odd sequence.",
+      "input": "87521500191",
+      "expected": {
+        "isValid": true,
+        "isBis": true,
+        "birthDate": "1987-12-15",
+        "birthYear": 1987,
+        "sex": "M"
+      },
+      "because": "Art.2 and Art.3; checksum OK."
+    },
+    {
+      "testName": "Valid — known date, sex unknown: month = base+20",
+      "testDescription": "1987-12-15 encoded as YY=87, MM=12+20=32, DD=15; sex unknown ⇒ +20; no seq parity rule.",
+      "input": "87321500544",
+      "expected": {
+        "isValid": true,
+        "isBis": true,
+        "birthDate": "1987-12-15",
+        "birthYear": 1987,
+        "sex": null
+      },
+      "because": "Art.2 (+20 when sex unknown). Checksum OK."
+    },
+
+    {
+      "testName": "Valid — unknown day or month, sex known (Article 5 form)",
+      "testDescription": "When day or month is unknown ⇒ date becomes YY, then '4', then 000. Sex is known (so '4').",
+      "input": "87400000664",
+      "expected": {
+        "isValid": true,
+        "isBis": true,
+        "birthDate": null,
+        "birthYear": 1987,
+        "sex": "F"
+      },
+      "because": "Art.5: YY '4' 000; sex known; even sequence (female). Checksum OK."
+    },
+    {
+      "testName": "Valid — unknown day or month, sex unknown (Article 5 form)",
+      "testDescription": "When day or month is unknown ⇒ date becomes YY, then '2', then 000. Sex unknown (so '2').",
+      "input": "87200000423",
+      "expected": {
+        "isValid": true,
+        "isBis": true,
+        "birthDate": null,
+        "birthYear": 1987,
+        "sex": null
+      },
+      "because": "Art.5: YY '2' 000; no parity rule. Checksum OK."
+    },
+
+    {
+      "testName": "Valid — unknown year, sex known (Article 5 form)",
+      "testDescription": "Unknown year ⇒ first two digits 00, third digit '4' (sex known), 4th-5th digits 00, 6th digit 1.",
+      "input": "00400100848",
+      "expected": {
+        "isValid": true,
+        "isBis": true,
+        "birthDate": null,
+        "birthYear": null,
+        "sex": "F"
+      },
+      "because": "Art.5 unknown-year pattern 00 4 00 1; even sequence (female). Checksum OK."
+    },
+    {
+      "testName": "Valid — unknown year, sex unknown (Article 5 form)",
+      "testDescription": "Unknown year ⇒ 00 2 00 1 (sex unknown = '2').",
+      "input": "00200100310",
+      "expected": {
+        "isValid": true,
+        "isBis": true,
+        "birthDate": null,
+        "birthYear": null,
+        "sex": null
+      },
+      "because": "Art.5 unknown-year pattern 00 2 00 1; checksum OK."
+    },
+
+    {
+      "testName": "Invalid — wrong checksum",
+      "testDescription": "Digits follow a valid pattern (sex unknown, +20) but control digits are incorrect.",
+      "input": "87321500545",
+      "expected": {
+        "isValid": false,
+        "isBis": true,
+        "birthDate": "1987-12-15",
+        "birthYear": 1987,
+        "sex": null
+      },
+      "because": "Fails Art.4 checksum."
+    },
+    {
+      "testName": "Invalid — impossible month value 13",
+      "testDescription": "Month 13 is outside all BIS month ranges (21–32 or 41–52) and not an Article 5 form.",
+      "input": "87131500112",
+      "expected": {
+        "isValid": false,
+        "isBis": true,
+        "birthDate": "1987-13-15",
+        "birthYear": 1987,
+        "sex": "M"
+      },
+      "because": "Month outside BIS ranges (Art.2)."
+    },
+    {
+      "testName": "Invalid — impossible month value 60",
+      "testDescription": "Month 60 is not permitted by BIS rules.",
+      "input": "87601500150",
+      "expected": {
+        "isValid": false,
+        "isBis": true,
+        "birthDate": "1987-60-15",
+        "birthYear": 1987,
+        "sex": "F"
+      },
+      "because": "Month outside BIS ranges (Art.2)."
+    },
+    {
+      "testName": "Invalid — misused Article 5 'unknown day/month' marker",
+      "testDescription": "For unknown day or month, positions 4–6 must be 000. Here they are not.",
+      "input": "87410000671",
+      "expected": {
+        "isValid": false,
+        "isBis": true,
+        "birthDate": null,
+        "birthYear": 1987,
+        "sex": "M"
+      },
+      "because": "Violates Art.5: YY '4|2' 000 required."
+    },
+    {
+      "testName": "Invalid — unknown year but sixth digit not '1'",
+      "testDescription": "Unknown year requires 00 [4|2] 00 1 (then 2, 3, ... only when sequence capacity is exhausted).",
+      "input": "00400000878",
+      "expected": {
+        "isValid": false,
+        "isBis": true,
+        "birthDate": null,
+        "birthYear": null,
+        "sex": "F"
+      },
+      "because": "Violates Art.5 unknown-year pattern (6th digit must start at 1)."
+    },
+    {
+      "testName": "Invalid — day set to 00 in normal 'known date' form",
+      "testDescription": "When using the normal known-date form (+20/+40), day cannot be 00. Use Article 5 if day/month unknown.",
+      "input": "87520000156",
+      "expected": {
+        "isValid": false,
+        "isBis": true,
+        "birthDate": "1987-12-00",
+        "birthYear": 1987,
+        "sex": "F"
+      },
+      "because": "Day=00 not allowed in Art.2 form; must use Art.5 encoding."
+    },
+    {
+      "testName": "Invalid — bogus Article 5 marker digit",
+      "testDescription": "Third digit is '3' (must be '4' when sex known or '2' when sex unknown).",
+      "input": "87300000196",
+      "expected": {
+        "isValid": false,
+        "isBis": true,
+        "birthDate": null,
+        "birthYear": 1987,
+        "sex": null
+      },
+      "because": "Violates Art.5: third digit must be 4 (sex known) or 2 (sex unknown)."
+    }
+  ]
+}

@@ -55,11 +55,36 @@ public class InszValidator: IInszValidator
         }
     }
 
-
     private static void CheckDate(string inszString, List<ValidationError> validationResults)
     {
+        var year = GetYear(inszString);
+        
+        var isBisSexKnown = IsBisWithSexKnown(inszString);
+        var isBisSexUnknown = IsBisWithSexUnknown(inszString);
+        var isBis = IsBisNumber(inszString);
+        var month = GetMonth(inszString);
+        
+        month = isBisSexKnown
+            ? month - 40
+            : isBisSexUnknown
+                ? month - 20 
+                : month;
+        
+        var day = GetDay(inszString);
+
+        // Special case for BIS numbers with unknown month
+        if (GetYearString(inszString) != "00"&& isBis && month == 0 && day == 0) { 
+            return; // skip date validation, date is unknown but valid
+        }
+        
+        // Special case for BIS numbers with unknown year
+        if (GetYearString(inszString) == "00" && isBis && month == 0 && day is > 0 and <= 10) {
+            return; // skip date validation, date is unknown but valid
+        }
+        
+        
         if (!DateTime.TryParseExact(
-                $"{GetYear(inszString):D4}-{GetMonth(inszString):D2}-{GetDay(inszString):D2}",
+                $"{year:D4}-{month:D2}-{day:D2}",
                 "yyyy-MM-dd",
                 CultureInfo.InvariantCulture,
                 DateTimeStyles.None,
@@ -69,7 +94,12 @@ public class InszValidator: IInszValidator
         }
     }
 
-    internal static int GetYear(string inszString) => int.Parse(inszString.Substring(0, 2)) + 1900;
+    internal static bool IsBisWithSexUnknown(string inszString) => GetMonth(inszString) >= 20 && GetMonth(inszString) <= 32;
+    internal static bool IsBisWithSexKnown(string inszString) => GetMonth(inszString) >= 40 && GetMonth(inszString) <= 52;
+    internal static bool IsBisNumber(string inszString) => IsBisWithSexKnown(inszString) || IsBisWithSexUnknown(inszString);
+    
+    private static string GetYearString(string inszString) => inszString.Substring(0, 2);
+    internal static int GetYear(string inszString) => int.Parse(GetYearString(inszString)) + 1900;
 
     internal static int GetMonth(string inszString) => int.Parse(inszString.Substring(2, 2));
     
