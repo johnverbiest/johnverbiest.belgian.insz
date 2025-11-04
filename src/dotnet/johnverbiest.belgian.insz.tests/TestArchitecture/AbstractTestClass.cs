@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Linq;
+using System.Text.Json;
 using johnverbiest.belgian.insz;
 using Xunit.Abstractions;
 
@@ -59,9 +60,9 @@ namespace johnverbiest.belgian.insz.tests.TestArchitecture
                 Output.WriteLine("❌ **INVALID**");
                 Output.WriteLine("");
                 
-                if (!string.IsNullOrWhiteSpace(result.ErrorMessage))
+                if (result.ValidationErrors.Any())
                 {
-                    Output.WriteLine($"Error: {result.ErrorMessage}");
+                    Output.WriteLine($"Errors: {string.Join(", ", result.ValidationErrors)}");
                     Output.WriteLine("");
                 }
             }
@@ -74,8 +75,11 @@ namespace johnverbiest.belgian.insz.tests.TestArchitecture
                 var inszJson = JsonSerializer.Serialize(result.InszNumber, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
                 Output.WriteLine($"  \"inszNumber\": {inszJson},");
             }
-            if (result.ErrorMessage != null)
-                Output.WriteLine($"  \"errorMessage\": \"{result.ErrorMessage}\"");
+            else
+            {
+                Output.WriteLine($"  \"inszNumber\": null,");
+            }
+            Output.WriteLine($"  \"errorMessages\": \"{string.Join(",", result.ValidationErrors)}\"");
             Output.WriteLine("}");
             Output.WriteLine("```");
             Output.WriteLine("");

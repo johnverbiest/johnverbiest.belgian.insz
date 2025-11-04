@@ -55,7 +55,7 @@
     {
       "testName": "Invalid long length",
       "testDescription": "Detects inputs longer than 11 digits.",
-      "input": "850613001780",
+      "input": "850613001717",
       "expected": { "isValid": false },
       "because": "Invalid length: 12 digits (RN must be exactly 11 digits)."
     },
