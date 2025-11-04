@@ -4,28 +4,21 @@ using Xunit.Abstractions;
 
 namespace johnverbiest.belgian.insz.tests.Tests
 {
-    public class RunnerTests
+    public class RunnerTests: AbstractTestClass
     {
-        private readonly ITestOutputHelper _output;
-
-        public RunnerTests(ITestOutputHelper output)
-        {
-            _output = output;
-        }
+        public RunnerTests(ITestOutputHelper output): base(output) { }
 
         [Fact]
         public void TestsAreRunning()
         {
-            _output.WriteLine("Test is running successfully");
+            Output.WriteLine("Test is running successfully");
             Assert.True(true);
         }
         
         [Theory, JsonFileData("test-vectors\\runner-tests.json")]
-        public void Runner_CanBeCreated(TestCase testCase)
+        public void RunnerDoesDocumentation(TestCase testCase)
         {
-            _output.WriteLine($"Testing case: {testCase?.Input ?? "null"}");
-            _output.WriteLine($"Expected valid: {testCase?.Expected?.IsValid?.ToString() ?? "null"}");
-            _output.WriteLine($"Because: {testCase?.Because ?? "no reason given"}");
+            DocumentTest(testCase);
         }
     }
 }

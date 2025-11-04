@@ -6,16 +6,15 @@ This folder contains a set of shared json test vectors for Belgian INSZ/RN/BIS i
 
 ```json
 {
-  "name": "validator tests",
-  "description": "High-level tests for the INSZ validator covering RN and BIS, with multiple expected outcomes (boolean and categorical).",
+  "name": "pre-2000 RN validator tests",
+  "description": "Working and failing Belgian Rijksregisternummer (pre-2000 rule only). No BIS or special cases included; all months are 01–12.",
   "testCases": [
     {
-      "input": "85061300180",
-      "expected": {
-        "isValid": true,
-        "sex": "M"
-      },
-      "because": "Valid RN (male), checksum correct, pre-2000 rule."
+      "testName": "short label",
+      "testDescription": "concise explanation of what this case verifies",
+      "input": "85061300178",
+      "expected": { "isValid": true },
+      "because": "Detailed reasoning if you need to explain why the outcome is expected"
     }
   ]
 }
@@ -23,6 +22,8 @@ This folder contains a set of shared json test vectors for Belgian INSZ/RN/BIS i
 
 🧠 Rules:
 
+- testName: human-readable name for the test case
+- testDescription: longer human-readable description of what the test case verifies
 - input: always the INSZ string to test
 - expected: object with one or more key/value pairs you want to verify
   - e.g. "isValid", "sex", "isBis", "birthDate", "century", …

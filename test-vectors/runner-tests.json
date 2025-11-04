@@ -3,6 +3,8 @@
   "description": "Minimal test to verify the test system can load JSON test vectors.",
   "testCases": [
     {
+      "testName": "Data Load Test",
+      "testDescription": "This test checks that the input data is correctly interpreted by the test runner.",
       "input": "true",
       "expected": { "isValid": true },
       "because": "Input is true, so it should be valid."

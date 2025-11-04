@@ -13,7 +13,7 @@ public class InszValidationResult
     /// <summary>
     /// Gets the parsed INSZ number when <see cref="IsValid"/> is <c>true</c>; otherwise, <c>null</c>.
     /// </summary>
-    public InszNumber? Number { get; init; }
+    public InszNumber? InszNumber { get; init; }
     
     /// <summary>
     /// Gets a human-readable error message describing why validation failed.

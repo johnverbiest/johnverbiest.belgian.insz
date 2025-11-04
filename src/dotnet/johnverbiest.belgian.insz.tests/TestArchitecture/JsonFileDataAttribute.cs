@@ -14,7 +14,7 @@ namespace johnverbiest.belgian.insz.tests.TestArchitecture
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
     public sealed class JsonFileDataAttribute : DataAttribute
     {
-        private static readonly ConcurrentDictionary<string, string[]> Cache = new();
+        private static readonly ConcurrentDictionary<string, (string[] TestCases, string? Name, string? Description)> Cache = new();
 
         public JsonFileDataAttribute(string relativePath, string? jsonPath = null)
         {
@@ -38,12 +38,17 @@ namespace johnverbiest.belgian.insz.tests.TestArchitecture
                     "Set the file to Copy to Output Directory.");
 
             var key = fullPath + "::" + JsonPath;
-            var jsonStrings = Cache.GetOrAdd(key, _ =>
+            var (jsonStrings, testSuiteName, testSuiteDescription) = Cache.GetOrAdd(key, _ =>
             {
                 using var stream = File.OpenRead(fullPath);
                 using var doc = JsonDocument.Parse(stream);
-                JsonElement node = doc.RootElement;
+                JsonElement root = doc.RootElement;
+                
+                // Extract name and description from root level
+                string? name = root.TryGetProperty("name", out var nameEl) ? nameEl.GetString() : null;
+                string? description = root.TryGetProperty("description", out var descEl) ? descEl.GetString() : null;
 
+                JsonElement node = root;
                 if (!string.IsNullOrEmpty(JsonPath))
                 {
                     foreach (var part in JsonPath.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries))
@@ -57,7 +62,8 @@ namespace johnverbiest.belgian.insz.tests.TestArchitecture
                     throw new InvalidOperationException(
                         $"JSON at {JsonPath} in {fullPath} must be an array.");
 
-                return node.EnumerateArray().Select(el => el.GetRawText()).ToArray();
+                var testCases = node.EnumerateArray().Select(el => el.GetRawText()).ToArray();
+                return (testCases, name, description);
             });
 
             var parameters = testMethod.GetParameters();
@@ -71,7 +77,22 @@ namespace johnverbiest.belgian.insz.tests.TestArchitecture
                 if (singleParam)
                 {
                     var targetType = parameters[0].ParameterType;
-                    yield return new[] { DeserializeToType(jsonString, targetType, JsonOptions)! };
+                    var deserializedObject = DeserializeToType(jsonString, targetType, JsonOptions);
+                    
+                    // If it's a TestCase, inject the test suite name and description
+                    if (deserializedObject is TestCase testCase)
+                    {
+                        var enhancedTestCase = testCase with 
+                        { 
+                            Name = testCase.Name ?? testSuiteName,
+                            Description = testCase.Description ?? testSuiteDescription
+                        };
+                        yield return new object[] { enhancedTestCase };
+                    }
+                    else
+                    {
+                        yield return new object[] { deserializedObject! };
+                    }
                 }
                 else
                 {
@@ -87,7 +108,21 @@ namespace johnverbiest.belgian.insz.tests.TestArchitecture
                             throw new InvalidOperationException(
                                 $"Parameter '{p.Name}' not found in test vector element for {testMethod.Name}.");
 
-                        row[i] = DeserializeToType(prop.GetRawText(), p.ParameterType, JsonOptions);
+                        var deserializedParam = DeserializeToType(prop.GetRawText(), p.ParameterType, JsonOptions);
+                        
+                        // If it's a TestCase parameter, inject the test suite name and description
+                        if (deserializedParam is TestCase testCase)
+                        {
+                            row[i] = testCase with 
+                            { 
+                                Name = testCase.Name ?? testSuiteName,
+                                Description = testCase.Description ?? testSuiteDescription
+                            };
+                        }
+                        else
+                        {
+                            row[i] = deserializedParam;
+                        }
                     }
                     yield return row!;
                 }
