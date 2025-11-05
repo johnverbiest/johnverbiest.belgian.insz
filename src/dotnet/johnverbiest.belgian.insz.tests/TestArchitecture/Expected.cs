@@ -11,5 +11,6 @@ namespace johnverbiest.belgian.insz.tests.TestArchitecture
         public string? BirthDate { get; init; }
         public DateTime? BirthDateTime => BirthDate != null ? DateTime.ParseExact(BirthDate, "yyyy-MM-dd", CultureInfo.InvariantCulture) : null;
         public short? BirthYear { get; init; }
+        public bool? IsBis { get; init; }
     }
 }

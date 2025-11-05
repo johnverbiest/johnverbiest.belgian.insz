@@ -32,6 +32,8 @@ public record InszNumber
     /// Is the number valid, or null if it has not been validated
     /// </summary>
     public bool? IsValid { get; internal init; } = null;
+    
+    public bool? IsBis => IsValid == true ? InszValidator.IsBisNumber(_inszString.Value) : null;
 
     public override string ToString() => _inszString.Value;
     

@@ -31,6 +31,7 @@ namespace johnverbiest.belgian.insz.tests.TestArchitecture
             Output.WriteLine("Expected: ");
             Output.WriteLine("```");
             Output.WriteLine($"IsValid: {c.Expected.IsValid}");
+            Output.WriteLine($"IsBis: {c.Expected.IsBis}");
             Output.WriteLine($"Birthdate: {c.Expected.BirthDate}");
             Output.WriteLine($"BirthYear: {c.Expected.BirthYear}");
             Output.WriteLine("```");
