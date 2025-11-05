@@ -18,7 +18,7 @@ public class InszValidator: IInszValidator
     {
         var validationResults = new List<ValidationError>();
         
-        var inszNumber = CheckForNonNumericalCharacters(inszString, validationResults);
+        inszString = CheckForNonNumericalCharactersAndReturnCleanVersion(inszString, validationResults);
         // If there are non-numerical characters, skip the rest of the validation as they may cause exceptions.
         if (validationResults.Any())
         {
@@ -30,19 +30,20 @@ public class InszValidator: IInszValidator
         CheckDate(inszString, validationResults);
         CheckSequenceNumber(inszString, validationResults);
 
+        var numberValue = long.Parse(inszString);
 
         return validationResults.Any()
             ? InszValidationResult.Invalid(new InszNumber()
             {
                 HasBeenValidated = true,
                 IsValid = false,
-                Value = inszNumber
+                Value = numberValue
             },validationResults.ToArray())
             : InszValidationResult.Valid(new InszNumber()
                 {
                     HasBeenValidated = true,
                     IsValid = true,
-                    Value = inszNumber
+                    Value = numberValue
                 });
     }
 
@@ -103,7 +104,7 @@ public class InszValidator: IInszValidator
     
     internal static short? GetBirthYear(string inszString)
     {
-        if (IsBisNumber(inszString) && inszString.Substring(0, 5) == "00000")
+        if (IsBisNumber(inszString) && inszString.Substring(0, 2) == "00" && inszString.Substring(3,2) == "00")
         {
             return null;
         }
@@ -117,6 +118,7 @@ public class InszValidator: IInszValidator
         return year;
     }
 
+    private static string GetMonthString(string inszString) => inszString.Substring(2, 2);
     internal static int GetMonth(string inszString) => int.Parse(inszString.Substring(2, 2));
     
     internal static int GetDay(string inszString) => int.Parse(inszString.Substring(4, 2));
@@ -169,22 +171,22 @@ public class InszValidator: IInszValidator
         After2000
     }
 
-    private static long CheckForNonNumericalCharacters(string input, List<ValidationError> validationResults)
+    private static string CheckForNonNumericalCharactersAndReturnCleanVersion(string input, List<ValidationError>? validationResults)
     {
         var isNumber = long.TryParse(input, out var inszNumber);
         if (!isNumber)
         {
-            validationResults.Add(ValidationError.InputIsNotANumber);
+            validationResults?.Add(ValidationError.InputIsNotANumber);
         }
 
-        return inszNumber;
+        return input;
     }
 
-    private static void CheckLength(string input, List<ValidationError> validationResults)
+    private static void CheckLength(string input, List<ValidationError>? validationResults)
     {
         if (input.Length != 11)
         {
-            validationResults.Add(ValidationError.InputIsWrongLength);
+            validationResults?.Add(ValidationError.InputIsWrongLength);
         }
     }
 }
