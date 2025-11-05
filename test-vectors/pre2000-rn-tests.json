@@ -87,7 +87,7 @@
       "input": "8506130017",
       "expected": {
         "isValid": false,
-        "isBis": false,
+        "isBis": null,
         "birthDate": null,
         "birthYear": null,
         "sex": null
@@ -100,7 +100,7 @@
       "input": "850613001717",
       "expected": {
         "isValid": false,
-        "isBis": false,
+        "isBis": null,
         "birthDate": null,
         "birthYear": null,
         "sex": null
@@ -113,7 +113,7 @@
       "input": "8506130017A",
       "expected": {
         "isValid": false,
-        "isBis": false,
+        "isBis": null,
         "birthDate": null,
         "birthYear": null,
         "sex": null
@@ -126,10 +126,10 @@
       "input": "99023100195",
       "expected": {
         "isValid": false,
-        "isBis": false,
-        "birthDate": "1999-02-31",
-        "birthYear": 1999,
-        "sex": "M"
+        "isBis": null,
+        "birthDate": null,
+        "birthYear": null,
+        "sex": null
       },
       "because": "Invalid date: 31/02/1999 does not exist (checksum would otherwise fit pre-2000)."
     },
@@ -139,10 +139,10 @@
       "input": "85131300130",
       "expected": {
         "isValid": false,
-        "isBis": false,
-        "birthDate": "1985-13-13",
-        "birthYear": 1985,
-        "sex": "M"
+        "isBis": null,
+        "birthDate": null,
+        "birthYear": null,
+        "sex": null
       },
       "because": "Invalid month: 13 is outside 01–12 and not a BIS offset."
     },
@@ -152,10 +152,10 @@
       "input": "85060000180",
       "expected": {
         "isValid": false,
-        "isBis": false,
-        "birthDate": "1985-06-00",
-        "birthYear": 1985,
-        "sex": "F"
+        "isBis": null,
+        "birthDate": null,
+        "birthYear": null,
+        "sex": null
       },
       "because": "Invalid day: 00 is not a valid calendar day for RN."
     },
@@ -165,10 +165,10 @@
       "input": "99022900158",
       "expected": {
         "isValid": false,
-        "isBis": false,
-        "birthDate": "1999-02-29",
-        "birthYear": 1999,
-        "sex": "F"
+        "isBis": null,
+        "birthDate": null,
+        "birthYear": null,
+        "sex": null
       },
       "because": "Invalid date: 29/02/1999 is not a leap day (1999 not leap year)."
     },
@@ -178,10 +178,10 @@
       "input": "85113200128",
       "expected": {
         "isValid": false,
-        "isBis": false,
-        "birthDate": "1985-11-32",
-        "birthYear": 1985,
-        "sex": "F"
+        "isBis": null,
+        "birthDate": null,
+        "birthYear": null,
+        "sex": null
       },
       "because": "Invalid day: 32 in November is not valid and not an admin-day encoding."
     },
@@ -191,9 +191,9 @@
       "input": "85061300079",
       "expected": {
         "isValid": false,
-        "isBis": false,
-        "birthDate": "1985-06-13",
-        "birthYear": 1985,
+        "isBis": null,
+        "birthDate": null,
+        "birthYear": null,
         "sex": null
       },
       "because": "Invalid sequence: 000 is not assigned for RN."
@@ -204,9 +204,9 @@
       "input": "85061399950",
       "expected": {
         "isValid": false,
-        "isBis": false,
-        "birthDate": "1985-06-13",
-        "birthYear": 1985,
+        "isBis": null,
+        "birthDate": null,
+        "birthYear": null,
         "sex": null
       },
       "because": "Invalid sequence: 999 is not assigned for RN."
@@ -217,10 +217,10 @@
       "input": "85061300179",
       "expected": {
         "isValid": false,
-        "isBis": false,
-        "birthDate": "1985-06-13",
-        "birthYear": 1985,
-        "sex": "M"
+        "isBis": null,
+        "birthDate": null,
+        "birthYear": null,
+        "sex": null
       },
       "because": "Invalid checksum: digits base are fine but control digits are wrong."
     },
@@ -230,10 +230,10 @@
       "input": "85000000138",
       "expected": {
         "isValid": false,
-        "isBis": false,
-        "birthDate": "1985-00-00",
-        "birthYear": 1985,
-        "sex": "F"
+        "isBis": null,
+        "birthDate": null,
+        "birthYear": null,
+        "sex": null
       },
       "because": "Invalid month: 00 is not allowed for RN (and we are not using BIS fallbacks)."
     }

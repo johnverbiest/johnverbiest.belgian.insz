@@ -102,9 +102,9 @@
       "input": "87321500545",
       "expected": {
         "isValid": false,
-        "isBis": true,
-        "birthDate": "1987-12-15",
-        "birthYear": 1987,
+        "isBis": null,
+        "birthDate": null,
+        "birthYear": null,
         "sex": null
       },
       "because": "Fails Art.4 checksum."
@@ -115,10 +115,10 @@
       "input": "87131500112",
       "expected": {
         "isValid": false,
-        "isBis": true,
-        "birthDate": "1987-13-15",
-        "birthYear": 1987,
-        "sex": "M"
+        "isBis": null,
+        "birthDate": null,
+        "birthYear": null,
+        "sex": null
       },
       "because": "Month outside BIS ranges (Art.2)."
     },
@@ -128,10 +128,10 @@
       "input": "87601500150",
       "expected": {
         "isValid": false,
-        "isBis": true,
-        "birthDate": "1987-60-15",
-        "birthYear": 1987,
-        "sex": "F"
+        "isBis": null,
+        "birthDate": null,
+        "birthYear": null,
+        "sex": null
       },
       "because": "Month outside BIS ranges (Art.2)."
     },
@@ -141,10 +141,10 @@
       "input": "87410000671",
       "expected": {
         "isValid": false,
-        "isBis": true,
+        "isBis": null,
         "birthDate": null,
-        "birthYear": 1987,
-        "sex": "M"
+        "birthYear": null,
+        "sex": null
       },
       "because": "Violates Art.5: YY '4|2' 000 required."
     },
@@ -154,10 +154,10 @@
       "input": "00400000878",
       "expected": {
         "isValid": false,
-        "isBis": true,
+        "isBis": null,
         "birthDate": null,
         "birthYear": null,
-        "sex": "F"
+        "sex": null
       },
       "because": "Violates Art.5 unknown-year pattern (6th digit must start at 1)."
     },
@@ -167,10 +167,10 @@
       "input": "87520000156",
       "expected": {
         "isValid": false,
-        "isBis": true,
-        "birthDate": "1987-12-00",
-        "birthYear": 1987,
-        "sex": "F"
+        "isBis": null,
+        "birthDate": null,
+        "birthYear": null,
+        "sex": null
       },
       "because": "Day=00 not allowed in Art.2 form; must use Art.5 encoding."
     },
@@ -180,9 +180,9 @@
       "input": "87300000196",
       "expected": {
         "isValid": false,
-        "isBis": true,
+        "isBis": null,
         "birthDate": null,
-        "birthYear": 1987,
+        "birthYear": null,
         "sex": null
       },
       "because": "Violates Art.5: third digit must be 4 (sex known) or 2 (sex unknown)."

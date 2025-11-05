@@ -26,7 +26,7 @@ public class InszValidator: IInszValidator
         }
         
         CheckLength(inszString, validationResults);
-        CheckCheckSumAndReturnBase(inszString, validationResults);
+        CheckCheckSumAndReturnMode(inszString, validationResults);
         CheckDate(inszString, validationResults);
         CheckSequenceNumber(inszString, validationResults);
 
@@ -99,7 +99,23 @@ public class InszValidator: IInszValidator
     internal static bool IsBisNumber(string inszString) => IsBisWithSexKnown(inszString) || IsBisWithSexUnknown(inszString);
     
     private static string GetYearString(string inszString) => inszString.Substring(0, 2);
-    internal static int GetYear(string inszString) => int.Parse(GetYearString(inszString)) + 1900;
+    internal static short GetYear(string inszString) => (short)(short.Parse(GetYearString(inszString)) + 1900);
+    
+    internal static short? GetBirthYear(string inszString)
+    {
+        if (IsBisNumber(inszString) && inszString.Substring(0, 5) == "00000")
+        {
+            return null;
+        }
+        
+        var year = GetYear(inszString);
+        var mode = CheckCheckSumAndReturnMode(inszString, []);
+        if (mode == ValidationMode.After2000)
+        {
+            year += 100;
+        }
+        return year;
+    }
 
     internal static int GetMonth(string inszString) => int.Parse(inszString.Substring(2, 2));
     
@@ -109,14 +125,24 @@ public class InszValidator: IInszValidator
     
     internal static string GetInszString(long inszNumber) => inszNumber.ToString("D11");
     
-    internal static DateTime GetDate(string inszString)
+    internal static DateTime? GetDate(string inszString)
     {
-        Console.WriteLine(inszString);
-        var test = $"{GetYear(inszString)}-{GetMonth(inszString)}-{GetDay(inszString)}";
-        return new DateTime(GetYear(inszString), GetMonth(inszString), GetDay(inszString), 12, 0, 0);
+        var month = GetMonth(inszString);
+        month = IsBisWithSexKnown(inszString)
+            ? month - 40
+            : IsBisWithSexUnknown(inszString)
+                ? month - 20 
+                : month;
+        
+        if (month == 0) return null; // Unknown month
+
+        var year = GetBirthYear(inszString);
+        if (year == null) return null; // Unknown year
+        
+        return new DateTime((int)year, month, GetDay(inszString), 12, 0, 0);
     }
 
-    private static void CheckCheckSumAndReturnBase(string input, List<ValidationError> validationResults)
+    private static ValidationMode CheckCheckSumAndReturnMode(string input, List<ValidationError> validationResults)
     {
         var checkNumber = int.Parse(input.Substring(input.Length - 2, 2));
         var baseString = input.Substring(0, input.Length - 2);
@@ -132,8 +158,15 @@ public class InszValidator: IInszValidator
             {               
                 validationResults.Add(ValidationError.ChecksumIsInvalid);
             }
-
+            return ValidationMode.After2000;
         }
+        return ValidationMode.Before2000;
+    }
+    
+    private enum ValidationMode
+    {
+        Before2000,
+        After2000
     }
 
     private static long CheckForNonNumericalCharacters(string input, List<ValidationError> validationResults)

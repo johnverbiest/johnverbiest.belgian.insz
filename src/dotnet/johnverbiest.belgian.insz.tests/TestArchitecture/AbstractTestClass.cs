@@ -30,8 +30,9 @@ namespace johnverbiest.belgian.insz.tests.TestArchitecture
             Output.WriteLine("");
             Output.WriteLine("Expected: ");
             Output.WriteLine("```");
-            if (c.Expected.IsValid.HasValue)
-                Output.WriteLine($"IsValid: {c.Expected.IsValid}");
+            Output.WriteLine($"IsValid: {c.Expected.IsValid}");
+            Output.WriteLine($"Birthdate: {c.Expected.BirthDate}");
+            Output.WriteLine($"BirthYear: {c.Expected.BirthYear}");
             Output.WriteLine("```");
             Output.WriteLine("");
             Output.WriteLine($"Because {c.Because}");

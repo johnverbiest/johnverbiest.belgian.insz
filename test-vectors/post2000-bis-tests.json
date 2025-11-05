@@ -102,10 +102,10 @@
         "input": "03471400297",
         "expected": {
             "isValid": false,
-            "isBis": true,
-            "birthDate": "2003-07-14",
-            "birthYear": 2003,
-            "sex": "F"
+            "isBis": null,
+            "birthDate": null,
+            "birthYear": null,
+            "sex": null
         },
         "because": "Fails Art.4 checksum."
     },
@@ -114,11 +114,11 @@
         "testDescription": "Month 13 outside BIS ranges.",
         "input": "01130900164",
         "expected": {
-            "isValid": false,
-            "isBis": true,
-            "birthDate": "2001-13-09",
-            "birthYear": 2001,
-            "sex": "M"
+          "isValid": false,
+          "isBis": null,
+          "birthDate": null,
+          "birthYear": null,
+          "sex": null
         },
         "because": "Month outside BIS ranges (Art.2)."
     },
@@ -127,11 +127,11 @@
         "testDescription": "For unknown day/month, positions 4–6 must be 000.",
         "input": "05400100291",
         "expected": {
-            "isValid": false,
-            "isBis": true,
-            "birthDate": null,
-            "birthYear": 2005,
-            "sex": "F"
+          "isValid": false,
+          "isBis": null,
+          "birthDate": null,
+          "birthYear": null,
+          "sex": null
         },
         "because": "Violates Art.5: YY [4|2] 000 required."
     },
@@ -140,11 +140,11 @@
         "testDescription": "Third digit must be ‘4’ (sex known) or ‘2’ (sex unknown).",
         "input": "05300000152",
         "expected": {
-            "isValid": false,
-            "isBis": true,
-            "birthDate": null,
-            "birthYear": 2005,
-            "sex": "M"
+          "isValid": false,
+          "isBis": null,
+          "birthDate": null,
+          "birthYear": null,
+          "sex": null
         },
         "because": "Violates Art.5 marker rule."
     }
