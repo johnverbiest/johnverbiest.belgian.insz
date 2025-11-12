@@ -5,7 +5,7 @@
     {
         "testName": "Valid — known date, sex known (female): month = base+40, even seq",
         "testDescription": "2003-07-14 ⇒ YY=03, MM=47, DD=14; female ⇒ even seq.",
-        "input": "03471400296",
+        "input": "03.47.14-002.96",
         "expected": {
             "isValid": true,
             "isBis": true,
@@ -18,7 +18,7 @@
     {
         "testName": "Valid — known date, sex known (male): month = base+40, odd seq",
         "testDescription": "2001-01-09 ⇒ YY=01, MM=41, DD=09; male ⇒ odd seq.",
-        "input": "01410900166",
+        "input": "01 4109 00 166",
         "expected": {
             "isValid": true,
             "isBis": true,

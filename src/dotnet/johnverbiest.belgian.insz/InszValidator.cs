@@ -255,13 +255,28 @@ public class InszValidator: IInszValidator
     /// </summary>
     /// <param name="input">The input string to validate.</param>
     /// <param name="validationResults">Optional list to add validation errors to.</param>
-    /// <returns>The input string (currently unchanged).</returns>
+    /// <returns>The input string with common formatting characters removed (spaces, dashes, dots, slashes, underscores).</returns>
     /// <remarks>
-    /// Adds a validation error if the input contains non-numerical characters that prevent parsing as a long.
+    /// <para>
+    /// Removes common formatting characters that are typically used in INSZ number display formats:
+    /// spaces, hyphens/dashes, dots, forward slashes, and underscores.
+    /// </para>
+    /// <para>
+    /// Adds a validation error if the cleaned input still contains non-numerical characters that prevent parsing as a long.
+    /// </para>
     /// </remarks>
     private static string CheckForNonNumericalCharactersAndReturnCleanVersion(string input, List<ValidationError>? validationResults)
     {
-        var isNumber = long.TryParse(input, out var inszNumber);
+        // Remove common formatting characters used in INSZ number formats
+        input = input
+            .Replace(" ", "")      // spaces
+            .Replace("-", "")      // hyphens/dashes  
+            .Replace(".", "")      // dots
+            .Replace("/", "")      // forward slashes
+            .Replace("_", "")      // underscores
+            .Trim();               // leading/trailing whitespace
+            
+        var isNumber = long.TryParse(input, out _);
         if (!isNumber)
         {
             validationResults?.Add(ValidationError.InputIsNotANumber);
