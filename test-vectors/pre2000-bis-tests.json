@@ -37,7 +37,7 @@
         "isBis": true,
         "birthDate": "1987-12-15",
         "birthYear": 1987,
-        "sex": null
+        "sex": "U"
       },
       "because": "Art.2 (+20 when sex unknown). Checksum OK."
     },
@@ -64,7 +64,7 @@
         "isBis": true,
         "birthDate": null,
         "birthYear": 1987,
-        "sex": null
+        "sex": "U"
       },
       "because": "Art.5: YY '2' 000; no parity rule. Checksum OK."
     },
@@ -91,7 +91,7 @@
         "isBis": true,
         "birthDate": null,
         "birthYear": null,
-        "sex": null
+        "sex": "U"
       },
       "because": "Art.5 unknown-year pattern 00 2 00 1; checksum OK."
     },

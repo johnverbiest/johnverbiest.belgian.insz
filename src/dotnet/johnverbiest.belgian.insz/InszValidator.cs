@@ -167,4 +167,17 @@ public class InszValidator: IInszValidator
             validationResults?.Add(ValidationError.InputIsWrongLength);
         }
     }
+
+    public static Sex? GetSex(string inszStringValue)
+    {
+        var possibleSexNumber = int.Parse(inszStringValue.Substring(6, 3));
+        var couldBeFemale = possibleSexNumber % 2 == 0;
+
+        if (IsBisWithSexUnknown(inszStringValue))
+        {
+            return Sex.Unknown;
+        }
+
+        return couldBeFemale ? Sex.Female : Sex.Male;
+    }
 }

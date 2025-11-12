@@ -37,7 +37,7 @@
             "isBis": true,
             "birthDate": "2012-02-28",
             "birthYear": 2012,
-            "sex": null
+            "sex": "U"
         },
         "because": "Art.2 (+20 when sex unknown)."
     },
@@ -91,7 +91,7 @@
             "isBis": true,
             "birthDate": null,
             "birthYear": null,
-            "sex": null
+            "sex": "U"
         },
         "because": "Art.5 unknown-year form (00 2 00 1)."
     },

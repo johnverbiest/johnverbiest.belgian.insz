@@ -9,6 +9,7 @@ public record InszNumber
     private readonly Lazy<DateTime?> _birthDate;
     private readonly Lazy<int?> _birthYear;
     private readonly Lazy<string> _formattedString;
+    private readonly Lazy<bool?> _isBis;
 
     public InszNumber()
     {
@@ -16,6 +17,7 @@ public record InszNumber
         _birthDate = new Lazy<DateTime?>(() => InszValidator.GetDate(_inszString.Value), isThreadSafe: true);
         _formattedString = new Lazy<string>(() => $"{_inszString.Value.Substring(0, 2)}.{_inszString.Value.Substring(2, 2)}.{_inszString.Value.Substring(4, 2)}-{_inszString.Value.Substring(6, 3)}.{_inszString.Value.Substring(9, 2)}", isThreadSafe:true);
         _birthYear = new Lazy<int?>(() => InszValidator.GetBirthYear(_inszString.Value), isThreadSafe: true);
+        _isBis = new Lazy<bool?>(() => InszValidator.IsBisNumber(_inszString.Value), isThreadSafe: true);
     }
 
     /// <summary>
@@ -33,7 +35,7 @@ public record InszNumber
     /// </summary>
     public bool? IsValid { get; internal init; } = null;
     
-    public bool? IsBis => IsValid == true ? InszValidator.IsBisNumber(_inszString.Value) : null;
+    public bool? IsBis => IsValid == true ? _isBis.Value : null;
 
     public override string ToString() => _inszString.Value;
     
@@ -42,5 +44,7 @@ public record InszNumber
     public DateTime? BirthDate => IsValid == true ? InszValidator.GetDate(_inszString.Value) : null;
     
     public int? BirthYear => IsValid == true ? _birthYear.Value : null;
+    
+    public Sex? Sex => IsValid == true ? InszValidator.GetSex(_inszString.Value) : null;
 }
 

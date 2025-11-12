@@ -34,6 +34,7 @@ namespace johnverbiest.belgian.insz.tests.TestArchitecture
             Output.WriteLine($"IsBis: {c.Expected.IsBis}");
             Output.WriteLine($"Birthdate: {c.Expected.BirthDate}");
             Output.WriteLine($"BirthYear: {c.Expected.BirthYear}");
+            Output.WriteLine($"Sex: {c.Expected.SexEnum}");
             Output.WriteLine("```");
             Output.WriteLine("");
             Output.WriteLine($"Because {c.Because}");
