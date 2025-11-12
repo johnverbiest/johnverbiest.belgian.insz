@@ -168,16 +168,10 @@ public class InszValidator: IInszValidator
         }
     }
 
-    public static Sex? GetSex(string inszStringValue)
-    {
-        var possibleSexNumber = int.Parse(inszStringValue.Substring(6, 3));
-        var couldBeFemale = possibleSexNumber % 2 == 0;
-
-        if (IsBisWithSexUnknown(inszStringValue))
-        {
-            return Sex.Unknown;
-        }
-
-        return couldBeFemale ? Sex.Female : Sex.Male;
-    }
+    public static Sex? GetSex(string inszStringValue) =>
+        IsBisWithSexKnown(inszStringValue)
+            ? int.Parse(inszStringValue.Substring(6, 3)) % 2 == 0
+                ? Sex.Female
+                : Sex.Male
+            : Sex.Unknown;
 }
