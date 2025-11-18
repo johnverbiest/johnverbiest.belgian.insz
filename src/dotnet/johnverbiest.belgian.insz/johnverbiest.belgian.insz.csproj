@@ -8,7 +8,7 @@
     
     <!-- Package Information -->
     <PackageId>JohnVerbiest.Belgium.Insz</PackageId>
-    <Version>0.1.0</Version>
+    <!-- Version is managed by GitVersion -->
     <AssemblyName>JohnVerbiest.Belgium.Insz</AssemblyName>
     <RootNamespace>johnverbiest.belgian.insz</RootNamespace>
     
@@ -54,6 +54,9 @@
   <!-- Source Link Support -->
   <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
+    <PackageReference Include="GitVersion.MsBuild" Version="6.0.2" PrivateAssets="All">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
 </Project>
