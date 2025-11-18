@@ -8,7 +8,7 @@
     
     <!-- Package Information -->
     <PackageId>JohnVerbiest.Belgium.Insz</PackageId>
-    <Version>1.0.0</Version>
+    <Version>0.1.0</Version>
     <AssemblyName>JohnVerbiest.Belgium.Insz</AssemblyName>
     <RootNamespace>johnverbiest.belgian.insz</RootNamespace>
     
@@ -33,7 +33,7 @@
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     
     <!-- Release Notes -->
-    <PackageReleaseNotes>Initial release with full INSZ/NISS validation, BIS number support, and data extraction capabilities.</PackageReleaseNotes>
+    <PackageReleaseNotes>Initial .NET release (v0.1.0) with full INSZ/NISS validation, BIS number support, and data extraction capabilities. Version 1.0.0 will include npm package.</PackageReleaseNotes>
     
     <!-- Documentation -->
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
