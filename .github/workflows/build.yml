@@ -51,11 +51,18 @@ jobs:
       working-directory: src/dotnet/johnverbiest.belgian.insz
     
     - name: Build
-      run: dotnet build --configuration Release --no-restore /p:Version=${{ steps.gitversion.outputs.nuGetVersion }} /p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemVer }} /p:FileVersion=${{ steps.gitversion.outputs.assemblySemFileVer }}
+      run: dotnet build --configuration Release --no-restore /p:Version=${{ steps.gitversion.outputs.nuGetVersion }} /p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemVer }} /p:FileVersion=${{ steps.gitversion.outputs.assemblySemVer }}
       working-directory: src/dotnet/johnverbiest.belgian.insz
     
     - name: Test
-      run: dotnet test --configuration Release --no-build --verbosity normal
+      run: |
+        case "${{ matrix.dotnet-version }}" in
+          "6.0.x") FRAMEWORK=net6.0;;
+          "8.0.x") FRAMEWORK=net8.0;;
+          *) echo "Unsupported dotnet-version: ${{ matrix.dotnet-version }}"; exit 1;;
+        esac
+        echo "Running tests for framework: $FRAMEWORK"
+        dotnet test --configuration Release --no-build --framework $FRAMEWORK --verbosity normal
       working-directory: src/dotnet
       continue-on-error: false
     
@@ -79,6 +86,34 @@ jobs:
         name: symbol-package-${{ steps.gitversion.outputs.nuGetVersion }}
         path: src/dotnet/johnverbiest.belgian.insz/artifacts/*.snupkg
         retention-days: 7
+
+  windows-net48-tests:
+    name: Windows .NET Framework 4.8.1 Tests
+    runs-on: windows-latest
+    needs: build
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Setup .NET (ensure SDK present)
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Restore dependencies
+      run: dotnet restore
+      working-directory: src/dotnet/johnverbiest.belgian.insz
+
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+      working-directory: src/dotnet/johnverbiest.belgian.insz
+
+    - name: Test net481
+      run: dotnet test --configuration Release --no-build --framework net481 --verbosity normal
+      working-directory: src/dotnet
+      continue-on-error: false
 
   code-quality:
     name: Code Quality Analysis
