@@ -54,7 +54,7 @@
   <!-- Source Link Support -->
   <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
-    <PackageReference Include="GitVersion.MsBuild" Version="6.0.2" PrivateAssets="All">
+    <PackageReference Include="GitVersion.MsBuild" Version="5.12.0" PrivateAssets="All">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
