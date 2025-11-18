@@ -7,14 +7,89 @@ namespace johnverbiest.belgian.insz;
 /// </summary>
 public class InszValidator: IInszValidator
 {
-    /// <inheritdoc/>
-    public InszValidationResult Validate(long inszNumber) => Validate(GetInszString(inszNumber));
-
-    /// <inheritdoc/>
-    public InszValidationResult Validate(InszNumber inszNumber) => Validate(inszNumber.Value);
     
-    /// <inheritdoc/>
-    public InszValidationResult Validate(string inszString)
+    /// <summary>
+    /// Validates a Belgian INSZ number provided as a long integer.
+    /// </summary>
+    /// <param name="inszNumber">The INSZ number as a long integer (11 digits).</param>
+    /// <returns>
+    /// An <see cref="InszValidationResult"/> containing the validation outcome, the parsed <see cref="InszNumber"/> if valid, 
+    /// and any validation errors if invalid.
+    /// </returns>
+    /// <remarks>
+    /// This is a convenience method that calls the static validation logic directly.
+    /// Prefer this method for simple validation scenarios where you don't need dependency injection.
+    /// </remarks>
+    /// <example>
+    /// <code>
+    /// var result = InszValidator.ValidateInsz(85073003328L);
+    /// if (result.IsValid)
+    /// {
+    ///     Console.WriteLine($"Valid INSZ: {result.InszNumber.ToFormattedString()}");
+    /// }
+    /// </code>
+    /// </example>
+    public static InszValidationResult ValidateInsz(long inszNumber) => ValidateInsz(GetInszString(inszNumber));
+    
+    /// <summary>
+    /// Validates a Belgian INSZ number provided as an <see cref="InszNumber"/> object.
+    /// </summary>
+    /// <param name="inszNumber">The INSZ number object to validate.</param>
+    /// <returns>
+    /// An <see cref="InszValidationResult"/> containing the validation outcome, the parsed <see cref="InszNumber"/> if valid, 
+    /// and any validation errors if invalid.
+    /// </returns>
+    /// <remarks>
+    /// This is a convenience method that calls the static validation logic directly.
+    /// Prefer this method for simple validation scenarios where you don't need dependency injection.
+    /// </remarks>
+    /// <example>
+    /// <code>
+    /// var insz = new InszNumber { Value = 85073003328L };
+    /// var result = InszValidator.ValidateInsz(insz);
+    /// if (result.IsValid)
+    /// {
+    ///     Console.WriteLine($"Valid INSZ: {result.InszNumber.ToFormattedString()}");
+    /// }
+    /// </code>
+    /// </example>
+    public static InszValidationResult ValidateInsz(InszNumber inszNumber) => ValidateInsz(inszNumber.Value);
+    
+    /// <summary>
+    /// Validates a Belgian INSZ number provided as a string.
+    /// </summary>
+    /// <param name="inszString">The INSZ number as a string. May contain formatting characters (spaces, dashes, dots, etc.) which will be automatically removed.</param>
+    /// <returns>
+    /// An <see cref="InszValidationResult"/> containing the validation outcome, the parsed <see cref="InszNumber"/> if valid, 
+    /// and any validation errors if invalid.
+    /// </returns>
+    /// <remarks>
+    /// <para>
+    /// This is a convenience method that calls the static validation logic directly.
+    /// Prefer this method for simple validation scenarios where you don't need dependency injection.
+    /// </para>
+    /// <para>
+    /// The method automatically strips common formatting characters before validation, so inputs like 
+    /// "85.07.30-033.28", "85073003328", and "85-07-30-033-28" are all accepted.
+    /// </para>
+    /// </remarks>
+    /// <example>
+    /// <code>
+    /// var result = InszValidator.ValidateInsz("85.07.30-033.28");
+    /// if (result.IsValid)
+    /// {
+    ///     Console.WriteLine($"Birth Year: {result.InszNumber.BirthYear}");
+    /// }
+    /// else
+    /// {
+    ///     foreach (var error in result.ValidationErrors)
+    ///     {
+    ///         Console.WriteLine($"Error: {error}");
+    ///     }
+    /// }
+    /// </code>
+    /// </example>
+    public static InszValidationResult ValidateInsz(string inszString)
     {
         var validationResults = new List<ValidationError>();
         
@@ -46,6 +121,15 @@ public class InszValidator: IInszValidator
                     Value = numberValue
                 });
     }
+
+    /// <inheritdoc/>
+    public InszValidationResult Validate(long inszNumber) => ValidateInsz(inszNumber);
+
+    /// <inheritdoc/>
+    public InszValidationResult Validate(InszNumber inszNumber) => ValidateInsz(inszNumber);
+
+    /// <inheritdoc/>
+    public InszValidationResult Validate(string inszString) => ValidateInsz(inszString);
 
     /// <summary>
     /// Validates the sequence number component of the INSZ number.
