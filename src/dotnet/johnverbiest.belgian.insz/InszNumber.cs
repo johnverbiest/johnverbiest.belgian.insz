@@ -51,6 +51,13 @@ public record InszNumber
     private readonly Lazy<string> _formattedString;
     private readonly Lazy<bool?> _isBis;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="InszNumber"/> record.
+    /// </summary>
+    /// <remarks>
+    /// This constructor initializes lazy-loaded properties for efficient access to parsed components.
+    /// It's recommended to create instances through <see cref="InszValidator"/> to ensure proper validation.
+    /// </remarks>
     public InszNumber()
     {
         _inszString = new Lazy<string>(() => InszValidator.GetInszString(Value), isThreadSafe: true);

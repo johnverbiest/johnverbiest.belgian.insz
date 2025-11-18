@@ -1,5 +1,8 @@
 ﻿# Belgian INSZ/NISS Number Validator
 
+[![NuGet](https://img.shields.io/nuget/v/JohnVerbiest.Belgium.Insz.svg)](https://www.nuget.org/packages/JohnVerbiest.Belgium.Insz/)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
 A robust .NET library for validating, parsing, and working with Belgian national identification numbers (INSZ/NISS). This library provides comprehensive validation and data extraction for both regular INSZ numbers and BIS numbers.
 
 ## 📋 What is an INSZ Number?
@@ -540,7 +543,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](../../../LICENSE) file for details.
+This project is licensed under the Apache License 2.0 - see the [LICENSE](../../../LICENSE) file for details.
 
 ## 🔗 Links
 

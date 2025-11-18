@@ -5,6 +5,55 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
+    
+    <!-- Package Information -->
+    <PackageId>JohnVerbiest.Belgium.Insz</PackageId>
+    <Version>1.0.0</Version>
+    <AssemblyName>JohnVerbiest.Belgium.Insz</AssemblyName>
+    <RootNamespace>johnverbiest.belgian.insz</RootNamespace>
+    
+    <!-- Authors and Ownership -->
+    <Authors>John Verbiest</Authors>
+    <Company>John Verbiest</Company>
+    <Copyright>Copyright © John Verbiest 2025</Copyright>
+    
+    <!-- Package Description -->
+    <Title>Belgian INSZ/NISS Number Validator</Title>
+    <Description>A robust .NET library for validating, parsing, and working with Belgian national identification numbers (INSZ/NISS/RRN/BIS). Provides comprehensive validation, data extraction (birth date, sex, BIS detection), and supports multiple input formats. Thread-safe with zero dependencies.</Description>
+    <PackageTags>Belgium;INSZ;NISS;RRN;BIS;NationalNumber;Rijksregisternummer;Validation;Belgian;Identity;SSN;Social-Security</PackageTags>
+    
+    <!-- Repository and Project URLs -->
+    <RepositoryUrl>https://github.com/johnverbiest/NationalNumber.Be.DotNet</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageProjectUrl>https://github.com/johnverbiest/NationalNumber.Be.DotNet</PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    
+    <!-- Licensing -->
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    
+    <!-- Release Notes -->
+    <PackageReleaseNotes>Initial release with full INSZ/NISS validation, BIS number support, and data extraction capabilities.</PackageReleaseNotes>
+    
+    <!-- Documentation -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+    
+    <!-- Source Link for debugging -->
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
+
+  <!-- Include README.md in the package -->
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <!-- Source Link Support -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
+  </ItemGroup>
 
 </Project>
