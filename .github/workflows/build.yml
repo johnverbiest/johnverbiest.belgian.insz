@@ -14,7 +14,7 @@ jobs:
     
     strategy:
       matrix:
-        dotnet-version: ['6.0.x', '8.0.x']
+        dotnet-version: ['8.0.x']
     
     steps:
     - name: Checkout code
@@ -55,24 +55,15 @@ jobs:
       working-directory: src/dotnet/johnverbiest.belgian.insz
     
     - name: Test
-      run: |
-        case "${{ matrix.dotnet-version }}" in
-          "6.0.x") FRAMEWORK=net6.0;;
-          "8.0.x") FRAMEWORK=net8.0;;
-          *) echo "Unsupported dotnet-version: ${{ matrix.dotnet-version }}"; exit 1;;
-        esac
-        echo "Running tests for framework: $FRAMEWORK"
-        dotnet test --configuration Release --no-build --framework $FRAMEWORK --verbosity normal
+      run: dotnet test --configuration Release --no-build --framework net8.0 --verbosity normal
       working-directory: src/dotnet
       continue-on-error: false
     
     - name: Pack NuGet package
-      if: matrix.dotnet-version == '8.0.x'
       run: dotnet pack --configuration Release --no-build --output ./artifacts /p:PackageVersion=${{ steps.gitversion.outputs.nuGetVersion }}
       working-directory: src/dotnet/johnverbiest.belgian.insz
     
     - name: Upload NuGet package artifact
-      if: matrix.dotnet-version == '8.0.x'
       uses: actions/upload-artifact@v4
       with:
         name: nuget-package-${{ steps.gitversion.outputs.nuGetVersion }}
@@ -80,7 +71,6 @@ jobs:
         retention-days: 7
     
     - name: Upload symbol package artifact
-      if: matrix.dotnet-version == '8.0.x'
       uses: actions/upload-artifact@v4
       with:
         name: symbol-package-${{ steps.gitversion.outputs.nuGetVersion }}
