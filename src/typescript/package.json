@@ -1,0 +1,22 @@
+{
+  "name": "johnverbiest.belgian.insz",
+  "version": "1.0.0",
+  "description": "A robust typescript library for validating, parsing, and working with Belgian national identification numbers (INSZ/NISS/RRN/BIS). Provides comprehensive validation, data extraction (birth date, sex, BIS detection), and supports multiple input formats.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/johnverbiest/johnverbiest.belgian.insz.git"
+  },
+  "keywords": [
+    "Belgium;INSZ;NISS;RRN;BIS;NationalNumber;Rijksregisternummer;Validation;Belgian;Identity;SSN;Social-Security"
+  ],
+  "author": "John Verbiest",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/johnverbiest/johnverbiest.belgian.insz/issues"
+  },
+  "homepage": "https://github.com/johnverbiest/johnverbiest.belgian.insz#readme"
+}
