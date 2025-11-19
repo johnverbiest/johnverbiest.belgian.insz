@@ -9,7 +9,7 @@ on:
 jobs:
   publish:
     name: Build and Publish to NuGet
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     
     steps:
     - name: Checkout code
@@ -47,7 +47,7 @@ jobs:
       working-directory: src/dotnet/johnverbiest.belgian.insz
     
     - name: Run tests
-      run: dotnet test --configuration Release --no-build --verbosity normal
+      run: dotnet test --configuration Release --no-build --verbosity normal --framework net8.0
       working-directory: src/dotnet
     
     - name: Pack NuGet package
