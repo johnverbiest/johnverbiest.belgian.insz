@@ -1,4 +1,6 @@
-﻿namespace johnverbiest.belgian.insz;
+﻿using System;
+
+namespace johnverbiest.belgian.insz;
 
 /// <summary>
 /// Represents a Belgian National Number (INSZ/NISS - Identificatienummer van de Sociale Zekerheid/Numéro d'identification de la sécurité sociale) 
