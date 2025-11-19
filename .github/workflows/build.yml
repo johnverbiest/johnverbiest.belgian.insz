@@ -208,3 +208,90 @@ jobs:
         VALIDATE_YAML: true
       continue-on-error: true
 
+  deploy:
+    name: Deploy to NuGet and Create Release
+    runs-on: ubuntu-latest
+    needs: [build, package-validation]
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+    environment: production
+    permissions:
+      contents: write
+      packages: write
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: Install GitVersion
+      uses: gittools/actions/gitversion/setup@v1.1.1
+      with:
+        versionSpec: '5.x'
+    
+    - name: Determine Version
+      id: gitversion
+      uses: gittools/actions/gitversion/execute@v1.1.1
+      with:
+        useConfigFile: true
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+    
+    - name: Download NuGet package
+      uses: actions/download-artifact@v4
+      with:
+        name: nuget-package-${{ steps.gitversion.outputs.nuGetVersion }}
+        path: ./packages
+    
+    - name: Download symbol package
+      uses: actions/download-artifact@v4
+      with:
+        name: symbol-package-${{ steps.gitversion.outputs.nuGetVersion }}
+        path: ./packages
+    
+    - name: Publish to NuGet
+      run: dotnet nuget push "./packages/*.nupkg" --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+      continue-on-error: false
+    
+    - name: Create Release Notes
+      id: release_notes
+      run: |
+        VERSION="${{ steps.gitversion.outputs.semVer }}"
+        CHANGELOG_FILE="src/dotnet/johnverbiest.belgian.insz/CHANGELOG.md"
+        
+        # Create release notes
+        echo "## Release $VERSION" > release_notes.md
+        echo "" >> release_notes.md
+        echo "### What's Changed" >> release_notes.md
+        
+        # Try to extract changes from CHANGELOG if it exists
+        if [ -f "$CHANGELOG_FILE" ]; then
+          echo "- See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/master/src/dotnet/johnverbiest.belgian.insz/CHANGELOG.md) for detailed changes" >> release_notes.md
+        else
+          echo "- Various improvements and bug fixes" >> release_notes.md
+        fi
+        
+        echo "" >> release_notes.md
+        echo "### NuGet Package" >> release_notes.md
+        echo "- Package: [JohnVerbiest.Belgium.Insz v$VERSION](https://www.nuget.org/packages/JohnVerbiest.Belgium.Insz/$VERSION)" >> release_notes.md
+        
+        echo "release_notes<<EOF" >> $GITHUB_OUTPUT
+        cat release_notes.md >> $GITHUB_OUTPUT
+        echo "EOF" >> $GITHUB_OUTPUT
+    
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: v${{ steps.gitversion.outputs.semVer }}
+        name: Release v${{ steps.gitversion.outputs.semVer }}
+        body: ${{ steps.release_notes.outputs.release_notes }}
+        draft: false
+        prerelease: ${{ contains(steps.gitversion.outputs.semVer, '-') }}
+        files: |
+          ./packages/JohnVerbiest.Belgium.Insz.${{ steps.gitversion.outputs.nuGetVersion }}.nupkg
+          ./packages/JohnVerbiest.Belgium.Insz.${{ steps.gitversion.outputs.nuGetVersion }}.snupkg
+        token: ${{ secrets.GITHUB_TOKEN }}
+
