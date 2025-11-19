@@ -10,7 +10,7 @@ on:
 jobs:
   build:
     name: Build and Test
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     
     strategy:
       matrix:
@@ -46,11 +46,42 @@ jobs:
       with:
         dotnet-version: ${{ matrix.dotnet-version }}
     
+    - name: Setup additional .NET versions
+      if: matrix.dotnet-version == '8.0.x'
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: |
+          6.0.x
+          8.0.x
+    
+    - name: Install .NET Framework 4.8.1 Developer Pack
+      run: |
+        Write-Host "Installing .NET Framework 4.8.1 Developer Pack..."
+        $url = "https://download.microsoft.com/download/9/8/6/986ddca1-925a-4862-b7a0-398a88d16073/NDP481-DevPack-KB5033662-ENU.exe"
+        $output = "$env:TEMP\NDP481-DevPack.exe"
+        Invoke-WebRequest -Uri $url -OutFile $output
+        Start-Process -FilePath $output -ArgumentList "/quiet" -Wait
+        Write-Host ".NET Framework 4.8.1 Developer Pack installed successfully"
+      shell: powershell
+    
+    - name: Verify .NET installations
+      run: |
+        echo "=== .NET Core/5+ versions ==="
+        dotnet --list-sdks
+        echo "=== .NET Framework versions ==="
+        reg query "HKLM\SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full" /v Release 2>nul | findstr Release
+      shell: cmd
+    
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v2
+      with:
+        msbuild-architecture: x64
+    
     - name: Restore dependencies
       run: dotnet restore johnverbiest.belgian.insz.sln
       working-directory: src/dotnet
     
-    - name: Build
+    - name: Build Solution
       run: dotnet build johnverbiest.belgian.insz.sln --configuration Release --no-restore /p:Version=${{ steps.gitversion.outputs.nuGetVersion }} /p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemVer }} /p:FileVersion=${{ steps.gitversion.outputs.assemblySemFileVer }}
       working-directory: src/dotnet
     
@@ -61,15 +92,15 @@ jobs:
     
     - name: Pack NuGet package
       if: matrix.dotnet-version == '8.0.x'
-      run: dotnet pack --configuration Release --no-build --output ./artifacts /p:PackageVersion=${{ steps.gitversion.outputs.nuGetVersion }}
-      working-directory: src/dotnet/johnverbiest.belgian.insz
+      run: dotnet pack johnverbiest.belgian.insz/johnverbiest.belgian.insz.csproj --configuration Release --no-build --output ./artifacts /p:PackageVersion=${{ steps.gitversion.outputs.nuGetVersion }}
+      working-directory: src/dotnet
     
     - name: Upload NuGet package artifact
       if: matrix.dotnet-version == '8.0.x'
       uses: actions/upload-artifact@v4
       with:
         name: nuget-package-${{ steps.gitversion.outputs.nuGetVersion }}
-        path: src/dotnet/johnverbiest.belgian.insz/artifacts/*.nupkg
+        path: src/dotnet/artifacts/*.nupkg
         retention-days: 7
     
     - name: Upload symbol package artifact
@@ -77,12 +108,12 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: symbol-package-${{ steps.gitversion.outputs.nuGetVersion }}
-        path: src/dotnet/johnverbiest.belgian.insz/artifacts/*.snupkg
+        path: src/dotnet/artifacts/*.snupkg
         retention-days: 7
 
   code-quality:
     name: Code Quality Analysis
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     
     steps:
     - name: Checkout code
@@ -110,7 +141,7 @@ jobs:
 
   package-validation:
     name: Validate NuGet Package
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     needs: build
     
     steps:
