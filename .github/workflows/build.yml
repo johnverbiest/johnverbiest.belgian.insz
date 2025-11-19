@@ -11,6 +11,11 @@ jobs:
   build:
     name: Build and Test
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: read
+      checks: write
+      pull-requests: write
     
     steps:
     - name: Checkout code
@@ -51,9 +56,17 @@ jobs:
       working-directory: src/dotnet
     
     - name: Test
-      run: dotnet test johnverbiest.belgian.insz.sln --configuration Release --no-build --verbosity normal --framework net8.0
+      run: dotnet test johnverbiest.belgian.insz.sln --configuration Release --no-build --verbosity normal --framework net8.0 --logger trx --results-directory TestResults
       working-directory: src/dotnet
       continue-on-error: false
+    
+    - name: Publish Test Results
+      uses: dorny/test-reporter@v1
+      if: success() || failure()    # run this step even if previous steps failed
+      with:
+        name: .NET Test Results
+        path: 'src/dotnet/TestResults/*.trx'
+        reporter: dotnet-trx
     
     - name: Pack NuGet package
       run: dotnet pack johnverbiest.belgian.insz/johnverbiest.belgian.insz.csproj --configuration Release --no-build --output ./artifacts /p:PackageVersion=${{ steps.gitversion.outputs.nuGetVersion }}

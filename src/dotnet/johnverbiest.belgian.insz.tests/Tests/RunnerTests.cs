@@ -15,7 +15,7 @@ namespace johnverbiest.belgian.insz.tests.Tests
             Assert.True(true);
         }
         
-        [Theory, JsonFileData("test-vectors\\runner-tests.json")]
+        [Theory, JsonFileData("test-vectors/runner-tests.json")]
         public void RunnerDoesDocumentation(TestCase testCase)
         {
             DocumentTest(testCase);
