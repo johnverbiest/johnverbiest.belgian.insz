@@ -47,16 +47,16 @@ jobs:
         dotnet-version: ${{ matrix.dotnet-version }}
     
     - name: Restore dependencies
-      run: dotnet restore
-      working-directory: src/dotnet/johnverbiest.belgian.insz
+      run: dotnet restore johnverbiest.belgian.insz.sln
+      working-directory: src/dotnet
     
     - name: Build
-      run: dotnet build --configuration Release --no-restore /p:Version=${{ steps.gitversion.outputs.nuGetVersion }} /p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemVer }} /p:FileVersion=${{ steps.gitversion.outputs.assemblySemFileVer }}
-      working-directory: src/dotnet/johnverbiest.belgian.insz
+      run: dotnet build johnverbiest.belgian.insz.sln --configuration Release --no-restore /p:Version=${{ steps.gitversion.outputs.nuGetVersion }} /p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemVer }} /p:FileVersion=${{ steps.gitversion.outputs.assemblySemFileVer }}
+      working-directory: src/dotnet
     
     - name: Test
-      run: dotnet test --configuration Release --no-build --verbosity normal
-      working-directory: src/dotnet/johnverbiest.belgian.insz
+      run: dotnet test johnverbiest.belgian.insz.sln --configuration Release --no-build --verbosity normal
+      working-directory: src/dotnet
       continue-on-error: false
     
     - name: Pack NuGet package
