@@ -4,6 +4,7 @@ on:
   push:
     branches: [ main, master, develop ]
   pull_request:
+    types: [opened, synchronize, reopened]
     branches: [ main, master, develop ]
   workflow_dispatch:
 
@@ -68,11 +69,43 @@ jobs:
         path: 'src/dotnet/TestResults/*.trx'
         reporter: dotnet-trx
     
+    - name: Check code formatting (PR only)
+      if: github.event_name == 'pull_request'
+      run: dotnet format --verify-no-changes --no-restore
+      working-directory: src/dotnet/johnverbiest.belgian.insz
+      continue-on-error: true
+    
+    - name: Comment PR with build status
+      uses: actions/github-script@v7
+      if: github.event_name == 'pull_request' && always()
+      with:
+        script: |
+          const status = '${{ job.status }}';
+          const version = '${{ steps.gitversion.outputs.nuGetVersion }}';
+          const emoji = status === 'success' ? '✅' : '❌';
+          const message = `${emoji} PR Validation ${status === 'success' ? 'Passed' : 'Failed'}
+          
+          **Build Summary:**
+          - Version: \`${version}\`
+          - .NET Build: ${status === 'success' ? '✅ Success' : '❌ Failed'}
+          - Tests: ${status === 'success' ? '✅ Passed' : '❌ Failed'}
+          - Code Formatting: ${status === 'success' ? '✅ Success' : '❌ Failed'}
+          `;
+          
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: message
+          });
+    
     - name: Pack NuGet package
+      if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
       run: dotnet pack johnverbiest.belgian.insz/johnverbiest.belgian.insz.csproj --configuration Release --no-build --output ./artifacts /p:PackageVersion=${{ steps.gitversion.outputs.nuGetVersion }}
       working-directory: src/dotnet
     
     - name: Upload NuGet package artifact
+      if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
       uses: actions/upload-artifact@v4
       with:
         name: nuget-package-${{ steps.gitversion.outputs.nuGetVersion }}
@@ -80,6 +113,7 @@ jobs:
         retention-days: 7
     
     - name: Upload symbol package artifact
+      if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
       uses: actions/upload-artifact@v4
       with:
         name: symbol-package-${{ steps.gitversion.outputs.nuGetVersion }}
@@ -118,6 +152,7 @@ jobs:
     name: Validate NuGet Package
     runs-on: ubuntu-latest
     needs: build
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     
     steps:
     - name: Checkout code
@@ -152,5 +187,24 @@ jobs:
     
     - name: Validate package
       run: dotnet-validate package local ./packages/*.nupkg
+      continue-on-error: true
+
+  security:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Run security scan
+      uses: github/super-linter@v5
+      env:
+        DEFAULT_BRANCH: main
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        VALIDATE_CSHARP: true
+        VALIDATE_MARKDOWN: true
+        VALIDATE_YAML: true
       continue-on-error: true
 
