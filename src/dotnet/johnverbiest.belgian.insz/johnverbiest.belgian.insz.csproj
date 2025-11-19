@@ -6,9 +6,8 @@
     <LangVersion>12</LangVersion>
     
     <!-- Package Information -->
-    <PackageId>JohnVerbiest.Belgium.Insz</PackageId>
+    <PackageId>johnverbiest.belgian.insz</PackageId>
     <!-- Version is managed by GitVersion -->
-    <AssemblyName>JohnVerbiest.Belgium.Insz</AssemblyName>
     <RootNamespace>johnverbiest.belgian.insz</RootNamespace>
     
     <!-- Authors and Ownership -->
@@ -22,9 +21,9 @@
     <PackageTags>Belgium;INSZ;NISS;RRN;BIS;NationalNumber;Rijksregisternummer;Validation;Belgian;Identity;SSN;Social-Security</PackageTags>
     
     <!-- Repository and Project URLs -->
-    <RepositoryUrl>https://github.com/johnverbiest/NationalNumber.Be.DotNet</RepositoryUrl>
+    <RepositoryUrl>https://github.com/johnverbiest/johnverbiest.belgian.insz</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageProjectUrl>https://github.com/johnverbiest/NationalNumber.Be.DotNet</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/johnverbiest/johnverbiest.belgian.insz</PackageProjectUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     
     <!-- Licensing -->
