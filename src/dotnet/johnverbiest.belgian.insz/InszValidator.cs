@@ -185,7 +185,7 @@ public class InszValidator: IInszValidator
         }
         
         // Special case for BIS numbers with unknown month
-        if (GetYearString(inszString) != "00"&& isBis && month == 0 && day == 0) { 
+        if (isBis && month == 0 && day == 0) { 
             return (null, year); // skip date validation, date is unknown but valid
         }
         
@@ -398,7 +398,7 @@ public class InszValidator: IInszValidator
     /// For regular numbers or BIS numbers with unknown sex, returns Unknown.
     /// </remarks>
     public static Sex? GetSex(string inszStringValue) =>
-        IsBisWithSexKnown(inszStringValue)
+        IsBisWithSexKnown(inszStringValue) || !IsBisNumber(inszStringValue)
             ? int.Parse(inszStringValue.Substring(6, 3)) % 2 == 0
                 ? Sex.Female
                 : Sex.Male

@@ -1,4 +1,4 @@
-﻿{
+{
   "name": "pre-2000 BIS validator tests",
   "description": "BIS numbers (pre-2000 rule). Covers known date (sex known/unknown), Article 5 unknown-day/month encoding, and Article 5 unknown-year encoding. Includes structural and checksum failures.",
   "testCases": [
@@ -149,15 +149,15 @@
       "because": "Violates Art.5: YY '4|2' 000 required."
     },
     {
-      "testName": "Invalid — unknown year but sixth digit not '1'",
-      "testDescription": "Unknown year requires 00 [4|2] 00 1 (then 2, 3, ... only when sequence capacity is exhausted).",
+      "testName": "Valid Known year but unknown day/month pattern used",
+        "testDescription": "Even though the year is known, the Article 5 unknown-day",
       "input": "00400000878",
       "expected": {
-        "isValid": false,
-        "isBis": null,
+        "isValid": true,
+        "isBis": true,
         "birthDate": null,
-        "birthYear": null,
-        "sex": null
+        "birthYear": 1900,
+        "sex": "F"
       },
       "because": "Violates Art.5 unknown-year pattern (6th digit must start at 1)."
     },

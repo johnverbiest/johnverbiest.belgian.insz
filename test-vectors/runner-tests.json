@@ -1,4 +1,4 @@
-﻿{
+{
   "name": "minimal validator test",
   "description": "Minimal test to verify the test system can load JSON test vectors.",
   "testCases": [

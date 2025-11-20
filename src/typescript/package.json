@@ -4,7 +4,9 @@
   "description": "A robust typescript library for validating, parsing, and working with Belgian national identification numbers (INSZ/NISS/RRN/BIS). Provides comprehensive validation, data extraction (birth date, sex, BIS detection), and supports multiple input formats.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc",
+    "test": "jest",
+    "prepublishOnly": "npm run build"
   },
   "repository": {
     "type": "git",
@@ -18,5 +20,18 @@
   "bugs": {
     "url": "https://github.com/johnverbiest/johnverbiest.belgian.insz/issues"
   },
-  "homepage": "https://github.com/johnverbiest/johnverbiest.belgian.insz#readme"
+  "homepage": "https://github.com/johnverbiest/johnverbiest.belgian.insz#readme",
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "typescript": "^5.9.3",
+    "@types/jest": "^29.5.12",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.2"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "roots": ["<rootDir>/tests"],
+    "testMatch": ["**/*.test.ts"]
+  }
 }
