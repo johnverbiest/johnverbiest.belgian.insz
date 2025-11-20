@@ -92,5 +92,34 @@ namespace johnverbiest.belgian.insz.tests.Tests
                 result!.InszNumber!.IsBis.Should().BeNull(because: testCase.Because);
             }
         }
+        
+        
+        [Theory(DisplayName = "Sex Extraction Tests")]
+        [JsonFileData("test-vectors/pre2000-rn-tests.json")]
+        [JsonFileData("test-vectors/post2000-rn-tests.json")]
+        [JsonFileData("test-vectors/pre2000-bis-tests.json")]
+        [JsonFileData("test-vectors/post2000-bis-tests.json")]
+        public void SexTest(TestCase testCase)
+        {
+            DocumentTest(testCase);
+            var result = new InszValidator().Validate(testCase.Input);
+            DocumentResult(result);
+
+            result.IsValid.Should().Be(testCase.Expected.IsValid ?? false, because: testCase.Because);
+            if (testCase.Expected.SexEnum.HasValue)
+            {
+                result.InszNumber!.Sex.Should().HaveValue(because: testCase.Because);
+                result.InszNumber!.Sex.Value.Should().Be(testCase.Expected.SexEnum.Value, because: testCase.Because);
+            }
+            else
+            {
+                if (result.InszNumber == null)
+                {
+                    // If the INZ number is null, we cannot check the BirthDate property.
+                    return;
+                }
+                result!.InszNumber!.Sex.Should().BeNull(because: testCase.Because);
+            }
+        }
     }
 }

@@ -18,7 +18,7 @@
     <!-- Package Description -->
     <Title>Belgian INSZ/NISS Number Validator</Title>
     <Description>A robust .NET library for validating, parsing, and working with Belgian national identification numbers (INSZ/NISS/RRN/BIS). Provides comprehensive validation, data extraction (birth date, sex, BIS detection), and supports multiple input formats. Thread-safe with zero dependencies.</Description>
-    <PackageTags>Belgium;INSZ;NISS;RRN;BIS;NationalNumber;Rijksregisternummer;Validation;Belgian;Identity;SSN;Social-Security</PackageTags>
+    <PackageTags>Belgium;Belgian;INSZ;NISS;RRN;BIS;National-Number;Rijksregisternummer;Numéro-National;Validation;Validator;Identity;Social-Security;SSN;National-Registry;Belgian-ID;CSharp;dotnet</PackageTags>
     
     <!-- Repository and Project URLs -->
     <RepositoryUrl>https://github.com/johnverbiest/johnverbiest.belgian.insz</RepositoryUrl>

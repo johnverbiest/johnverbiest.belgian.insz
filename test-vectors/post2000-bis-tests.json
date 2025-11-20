@@ -1,4 +1,4 @@
-﻿{
+{
     "name": "post-2000 BIS validator tests",
     "description": "BIS numbers (post-2000 rule). Adds isBis, birthDate, birthYear and sex. Each case follows the 1991 KB structure and checksum (Art.4, with 2-prefix).",
     "testCases": [
@@ -64,7 +64,7 @@
             "isBis": true,
             "birthDate": null,
             "birthYear": 2019,
-            "sex": null
+            "sex": "U"
         },
         "because": "Art.5: YY=19, marker ‘2’ (sex unknown)."
     },

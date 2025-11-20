@@ -1,4 +1,4 @@
-﻿{
+{
   "name": "pre-2000 RN validator tests",
   "description": "Working and failing Belgian Rijksregisternummer (pre-2000 rule only). No BIS or special cases included; all months are 01–12 and we avoid BIS offsets (+20/+40).",
   "testCases": [
