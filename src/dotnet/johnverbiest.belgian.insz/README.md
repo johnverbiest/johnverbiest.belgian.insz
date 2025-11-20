@@ -1,52 +1,420 @@
 ﻿# Belgian INSZ/NISS Number Validator
 
-[![NuGet](https://img.shields.io/nuget/v/JohnVerbiest.Belgium.Insz.svg)](https://www.nuget.org/packages/JohnVerbiest.Belgium.Insz/)
+[![NuGet](https://img.shields.io/nuget/v/johnverbiest.belgian.insz.svg)](https://www.nuget.org/packages/johnverbiest.belgian.insz/)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-A robust .NET library for validating, parsing, and working with Belgian national identification numbers (INSZ/NISS). This library provides comprehensive validation and data extraction for both regular INSZ numbers and BIS numbers.
+A robust .NET library for validating, parsing, and working with Belgian national identification numbers (INSZ/NISS/RRN/BIS). Provides comprehensive validation, data extraction (birth date, sex, BIS detection), and supports multiple input formats. Thread-safe with zero dependencies.
 
-## 📋 What is an INSZ Number?
+## 📋 What is INSZ/NISS?
 
-The Belgian INSZ number (Identificatienummer van de Sociale Zekerheid / Numéro d'Identification de la Sécurité Sociale) is used as a national identification number in Belgium. It's also known by various names:
+INSZ (Identificatienummer van de Sociale Zekerheid) or NISS (Numéro d'Identification de la Sécurité Sociale), also known as:
+- **RRN** (Rijksregisternummer / Numéro de Registre National) - Regular national registry number
+- **BIS** (Bis-nummer) - Temporary number for non-residents
 
-- **RN** (Rijksregisternummer) - for persons registered in the National Register
-- **BIS number** (Bis-nummer) - for persons not registered in the National Register
-- **NISS** - in the context of social security and eHealth
-- **NISS INSZ** - as referred to by the eHealth platform
-- **Rijksregisternummer (RRN)** - in Dutch
-- **Numéro de registre national (NRN)** - in French
-- **Numéro di registro nazionale (NRN)** - in Italian
-- **Nummer des Nationalregisters (NRN)** - in German
+These are unique 11-digit identification numbers assigned to individuals in Belgium.
 
-### Format
+## ✨ Features
 
-An INSZ number consists of 11 digits in the format: `YYMMDD-NNN-CC`
+- ✅ **Complete Validation** - Validates format, length, checksum, date, and sequence number
+- 📅 **Birth Date Extraction** - Extracts birth date and year from valid numbers
+- 👤 **Sex Detection** - Determines sex (Male/Female/Unknown) from sequence number
+- 🔍 **BIS Detection** - Identifies temporary BIS numbers vs regular RRN
+- 🎯 **Type-Safe** - Full .NET type support with comprehensive XML documentation
+- 🔄 **Multiple Input Formats** - Accepts strings, long integers, or InszNumber objects
+- 📝 **Detailed Error Messages** - Clear validation error reporting
+- 🧵 **Thread-Safe** - Safe for concurrent use with lazy-loaded properties
+- 🚀 **Zero Dependencies** - Pure .NET Standard 2.0 implementation
+- 💉 **DI-Friendly** - Supports both static and instance usage with dependency injection
 
-- **YY**: Birth year (last two digits)
-- **MM**: Birth month (01-12, or modified for BIS numbers: +20 for unknown sex, +40 for known sex)
-- **DD**: Birth day (01-31)
-- **NNN**: Sequence number (001-998, determines sex in some cases)
-- **CC**: Check digits (modulo 97 checksum)
-
-## 🚀 Installation
-
-Install the package via NuGet Package Manager:
+## 📦 Installation
 
 ```bash
-dotnet add package JohnVerbiest.Belgium.Insz
+dotnet add package johnverbiest.belgian.insz
 ```
-
-Or via the NuGet Package Manager Console:
 
 ```powershell
-Install-Package JohnVerbiest.Belgium.Insz
+Install-Package johnverbiest.belgian.insz
 ```
 
-## 📖 Usage
+## 🚀 Quick Start
 
-### Static Usage (Simple Scenarios)
+```csharp
+using johnverbiest.belgian.insz;
 
-For simple validation scenarios where you don't need dependency injection, use the static methods:
+// Validate a Belgian national number
+var result = InszValidator.ValidateInsz("85073003328");
+
+if (result.IsValid)
+{
+    Console.WriteLine("Valid INSZ number!");
+    Console.WriteLine($"Birth Date: {result.InszNumber?.BirthDate}");
+    Console.WriteLine($"Sex: {result.InszNumber?.Sex}");
+    Console.WriteLine($"Is BIS: {result.InszNumber?.IsBis}");
+}
+else
+{
+    Console.WriteLine($"Invalid: {string.Join(", ", result.ValidationErrors)}");
+}
+```
+
+## 📖 Usage Examples
+
+### Basic Validation (Static Methods)
+
+```csharp
+using johnverbiest.belgian.insz;
+
+// Validate with formatted string
+var result1 = InszValidator.ValidateInsz("85.07.30-033.28");
+Console.WriteLine(result1.IsValid); // true
+
+// Validate with unformatted string
+var result2 = InszValidator.ValidateInsz("85073003328");
+Console.WriteLine(result2.IsValid); // true
+
+// Validate with long integer
+var result3 = InszValidator.ValidateInsz(85073003328L);
+Console.WriteLine(result3.IsValid); // true
+
+// Validate with InszNumber object
+var insz = new InszNumber { Value = 85073003328L };
+var result4 = InszValidator.ValidateInsz(insz);
+Console.WriteLine(result4.IsValid); // true
+```
+
+### Dependency Injection Usage
+
+```csharp
+using johnverbiest.belgian.insz;
+using Microsoft.Extensions.DependencyInjection;
+
+// Register in your DI container (e.g., in Program.cs)
+services.AddSingleton<IInszValidator, InszValidator>();
+
+// Inject into your service or controller
+public class UserService
+{
+    private readonly IInszValidator _validator;
+    
+    public UserService(IInszValidator validator)
+    {
+        _validator = validator;
+    }
+    
+    public bool ValidateUserInsz(string insz)
+    {
+        var result = _validator.Validate(insz);
+        return result.IsValid;
+    }
+}
+```
+
+### Extracting Information
+
+```csharp
+using johnverbiest.belgian.insz;
+
+var result = InszValidator.ValidateInsz("85073003328");
+
+if (result.IsValid && result.InszNumber != null)
+{
+    var insz = result.InszNumber;
+    
+    // Access birth information
+    Console.WriteLine($"Birth Date: {insz.BirthDate}"); // DateTime object
+    Console.WriteLine($"Birth Year: {insz.BirthYear}"); // 1985
+    
+    // Check sex
+    Console.WriteLine($"Sex: {insz.Sex}"); // Male, Female, or Unknown
+    if (insz.Sex == Sex.Male)
+    {
+        Console.WriteLine("This is a male");
+    }
+    
+    // Check if it's a BIS number
+    Console.WriteLine($"Is BIS: {insz.IsBis}"); // false (regular RRN)
+    
+    // Get formatted string
+    Console.WriteLine($"Formatted: {insz.ToFormattedString()}"); // "85.07.30-033.28"
+    Console.WriteLine($"String: {insz.ToString()}"); // "85073003328"
+    Console.WriteLine($"Value: {insz.Value}"); // 85073003328L
+}
+```
+
+### Working with BIS Numbers
+
+```csharp
+using johnverbiest.belgian.insz;
+
+// BIS numbers have month increased by 20 or 40
+var result = InszValidator.ValidateInsz("85273003307"); // Month 27 = 07 + 20
+
+if (result.IsValid && result.InszNumber != null)
+{
+    Console.WriteLine($"Is BIS: {result.InszNumber.IsBis}"); // true
+    Console.WriteLine($"Birth Date: {result.InszNumber.BirthDate}"); // July 30, 1985
+    Console.WriteLine($"Birth Year: {result.InszNumber.BirthYear}"); // 1985
+}
+```
+
+### Error Handling
+
+```csharp
+using johnverbiest.belgian.insz;
+
+var result = InszValidator.ValidateInsz("12345678901");
+
+if (!result.IsValid)
+{
+    Console.WriteLine("Validation failed!");
+    
+    foreach (var error in result.ValidationErrors)
+    {
+        switch (error)
+        {
+            case ValidationError.InputIsNotANumber:
+                Console.WriteLine("Input contains non-numeric characters");
+                break;
+            case ValidationError.InputIsWrongLength:
+                Console.WriteLine("Input must be exactly 11 digits");
+                break;
+            case ValidationError.ChecksumIsInvalid:
+                Console.WriteLine("Checksum validation failed");
+                break;
+            case ValidationError.DateIsInvalid:
+                Console.WriteLine("Birth date is invalid");
+                break;
+            case ValidationError.InvalidSequenceNumber:
+                Console.WriteLine("Sequence number is out of range");
+                break;
+        }
+    }
+}
+```
+
+### Async/Await Pattern
+
+```csharp
+using johnverbiest.belgian.insz;
+
+public class InszService
+{
+    private readonly IInszValidator _validator;
+    
+    public InszService(IInszValidator validator)
+    {
+        _validator = validator;
+    }
+    
+    public async Task<bool> ValidateInszAsync(string insz)
+    {
+        // Validation is synchronous and fast, but you can wrap it in Task.Run if needed
+        return await Task.Run(() => _validator.Validate(insz).IsValid);
+    }
+}
+```
+
+### ASP.NET Core Integration
+
+```csharp
+using johnverbiest.belgian.insz;
+using Microsoft.AspNetCore.Mvc;
+
+// In Program.cs
+builder.Services.AddSingleton<IInszValidator, InszValidator>();
+
+// In your controller
+[ApiController]
+[Route("api/[controller]")]
+public class ValidationController : ControllerBase
+{
+    private readonly IInszValidator _validator;
+    
+    public ValidationController(IInszValidator validator)
+    {
+        _validator = validator;
+    }
+    
+    [HttpPost("validate")]
+    public IActionResult ValidateInsz([FromBody] string insz)
+    {
+        var result = _validator.Validate(insz);
+        
+        if (result.IsValid)
+        {
+            return Ok(new
+            {
+                Valid = true,
+                BirthDate = result.InszNumber?.BirthDate,
+                Sex = result.InszNumber?.Sex?.ToString(),
+                IsBis = result.InszNumber?.IsBis,
+                Formatted = result.InszNumber?.ToFormattedString()
+            });
+        }
+        
+        return BadRequest(new
+        {
+            Valid = false,
+            Errors = result.ValidationErrors.Select(e => e.ToString()).ToArray()
+        });
+    }
+}
+```
+
+## 🔧 API Reference
+
+### InszValidator Class
+
+The main validator class providing both static and instance methods.
+
+#### Static Methods
+
+| Method | Description |
+|--------|-------------|
+| `ValidateInsz(string)` | Validates an INSZ number from a string. Accepts formatted or unformatted input. |
+| `ValidateInsz(long)` | Validates an INSZ number from a long integer. |
+| `ValidateInsz(InszNumber)` | Validates an INSZ number from an InszNumber object. |
+
+#### Instance Methods (IInszValidator)
+
+| Method | Description |
+|--------|-------------|
+| `Validate(string)` | Validates an INSZ number from a string. |
+| `Validate(long)` | Validates an INSZ number from a long integer. |
+| `Validate(InszNumber)` | Validates an INSZ number from an InszNumber object. |
+
+### InszValidationResult Class
+
+Represents the result of an INSZ validation operation.
+
+#### Properties
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `IsValid` | `bool` | Indicates whether the INSZ number is valid. |
+| `InszNumber` | `InszNumber?` | The validated INSZ number object (null if invalid). |
+| `ValidationErrors` | `ValidationError[]` | Array of validation errors if the number is invalid. |
+
+### InszNumber Record
+
+Represents a Belgian INSZ number with extracted information.
+
+#### Properties
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `Value` | `long` | The numeric value of the INSZ (11 digits). |
+| `HasBeenValidated` | `bool` | Whether this number has been validated. |
+| `IsValid` | `bool?` | Validation result. |
+| `IsBis` | `bool?` | Whether this is a BIS number. |
+| `BirthDate` | `DateTime?` | Extracted birth date. |
+| `BirthYear` | `int?` | Extracted birth year. |
+| `Sex` | `Sex?` | Extracted sex. |
+
+#### Methods
+
+| Method | Returns | Description |
+|--------|---------|-------------|
+| `ToString()` | `string` | Returns the 11-digit string representation. |
+| `ToFormattedString()` | `string` | Returns formatted string (XX.XX.XX-XXX.XX). |
+
+### Sex Enum
+
+```csharp
+public enum Sex
+{
+    Unknown = 0,
+    Female = 1,
+    Male = 2
+}
+```
+
+### ValidationError Enum
+
+```csharp
+public enum ValidationError
+{
+    InputIsNotANumber,
+    ChecksumIsInvalid,
+    InputIsWrongLength,
+    DateIsInvalid,
+    InvalidSequenceNumber
+}
+```
+
+## 🎯 INSZ Number Format
+
+An INSZ number consists of 11 digits with the following structure:
+
+```
+YY MM DD SSS CC
+│  │  │  │   └─ Check digits (2 digits)
+│  │  │  └───── Sequence number (3 digits, 001-998)
+│  │  └──────── Day of birth (2 digits)
+│  └─────────── Month of birth or month placeholder (2 digits)
+└────────────── Year of birth (2 digits)
+```
+
+### Month Encoding
+
+- **00-12**: Regular RRN with known sex
+- **20-32**: BIS number with known sex (month + 20)
+- **40-52**: Regular RRN with unknown sex (month + 40)
+- **60-72**: BIS number with unknown sex (month + 60)
+
+### Sequence Number
+
+- **Odd numbers (001, 003, 005, ...)**: Male
+- **Even numbers (002, 004, 006, ...)**: Female
+- **Range**: 001-998
+
+### Checksum
+
+The last 2 digits are calculated using modulo 97:
+- For dates before 2000: `97 - (first 9 digits % 97)`
+- For dates after 2000: `97 - ((2 + first 9 digits) % 97)`
+
+## 🎓 Framework Support
+
+This library targets **.NET Standard 2.0**, which means it's compatible with:
+
+- ✅ .NET Core 2.0 and later
+- ✅ .NET Framework 4.6.1 and later
+- ✅ .NET 5, 6, 7, 8, 9+
+- ✅ Mono 5.4 and later
+- ✅ Xamarin.iOS 10.14 and later
+- ✅ Xamarin.Android 8.0 and later
+- ✅ Universal Windows Platform 10.0.16299 and later
+
+## 📚 Additional Resources
+
+- [Official Belgian Government Documentation](https://www.ibz.rrn.fgov.be/)
+- [INSZ Format Specification](https://www.ksz-bcss.fgov.be/nl/insz)
+- [National Registry Information](https://www.ibz.rrn.fgov.be/nl/rijksregister/)
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## 📄 License
+
+This project is licensed under the Apache License 2.0 - see the [LICENSE](../../../LICENSE) file for details.
+
+## 👨‍💻 Author
+
+**John Verbiest**
+
+## 🐛 Issues
+
+Found a bug or have a feature request? Please open an issue on [GitHub](https://github.com/johnverbiest/johnverbiest.belgian.insz/issues).
+
+## 🔗 Related Packages
+
+- [npm Version](https://www.npmjs.com/package/johnverbiest.belgian.insz) - TypeScript/JavaScript package for Node.js and browser applications
+
+---
+
+Made with ❤️ in Belgium
 
 ```csharp
 using johnverbiest.belgian.insz;
@@ -543,7 +911,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## 📄 License
 
-This project is licensed under the Apache License 2.0 - see the [LICENSE](../../../LICENSE) file for details.
+This project is licensed under the Apache License 2.0
 
 ## 🔗 Links
 
@@ -553,5 +921,5 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](../../
 
 ---
 
-Made with ❤️ for the Belgian developer community
+Made with ❤️ in Belgium
 

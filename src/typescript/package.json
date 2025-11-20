@@ -5,7 +5,8 @@
   "main": "index.js",
   "types": "index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "README.md"
   ],
   "scripts": {
     "build": "tsc",
@@ -17,7 +18,23 @@
     "url": "git+https://github.com/johnverbiest/johnverbiest.belgian.insz.git"
   },
   "keywords": [
-    "Belgium;INSZ;NISS;RRN;BIS;NationalNumber;Rijksregisternummer;Validation;Belgian;Identity;SSN;Social-Security"
+    "Belgium",
+    "Belgian",
+    "INSZ",
+    "NISS",
+    "RRN",
+    "BIS",
+    "National Number",
+    "Rijksregisternummer",
+    "Numéro National",
+    "Validation",
+    "Validator",
+    "Identity",
+    "Social Security",
+    "SSN",
+    "National Registry",
+    "TypeScript",
+    "Belgian ID"
   ],
   "author": "John Verbiest",
   "license": "Apache-2.0",
