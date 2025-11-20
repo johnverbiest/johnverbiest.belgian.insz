@@ -310,6 +310,7 @@ jobs:
     permissions:
       contents: write
       packages: write
+      id-token: write  # REQUIRED for trusted publishing with NuGet
     
     steps:
     - name: Checkout code
@@ -345,8 +346,8 @@ jobs:
         name: symbol-package-${{ steps.gitversion.outputs.nuGetVersion }}
         path: ./packages
     
-    - name: Publish to NuGet
-      run: dotnet nuget push "./packages/*.nupkg" --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+    - name: Publish to NuGet (Trusted Publishing)
+      run: dotnet nuget push "./packages/*.nupkg" --source https://api.nuget.org/v3/index.json --skip-duplicate
       continue-on-error: false
 
   deploy-npm:
@@ -389,11 +390,9 @@ jobs:
         name: npm-package-${{ steps.gitversion.outputs.semVer }}
         path: ./packages
     
-    - name: Publish to npm
+    - name: Publish to npm (Trusted Publishing)
       run: npm publish --provenance --access public ./packages/*.tgz
       working-directory: .
-      env:
-        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       continue-on-error: false
 
   create-release:
