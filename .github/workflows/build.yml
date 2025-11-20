@@ -345,6 +345,14 @@ jobs:
       with:
         name: symbol-package-${{ steps.gitversion.outputs.nuGetVersion }}
         path: ./packages
+        
+    # Get a short-lived NuGet API key
+    - name: NuGet login (OIDC → temp API key)
+      uses: NuGet/login@v1
+      id: login
+      with:
+        user: contoso-bot # Recommended: use a secret like ${{ secrets.NUGET_USER }} for your nuget.org username (profile name), NOT your email address
+ 
     
     - name: Publish to NuGet (Trusted Publishing)
       run: dotnet nuget push "./packages/*.nupkg" --source https://api.nuget.org/v3/index.json --skip-duplicate
@@ -383,6 +391,10 @@ jobs:
       with:
         node-version: '20'
         registry-url: 'https://registry.npmjs.org'
+        
+    # Ensure npm 11.5.1 or later is installed
+    - name: Update npm
+      run: npm install -g npm@latest
     
     - name: Download npm package
       uses: actions/download-artifact@v4
