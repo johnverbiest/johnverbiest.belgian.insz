@@ -355,7 +355,7 @@ jobs:
  
     
     - name: Publish to NuGet (Trusted Publishing)
-      run: dotnet nuget push "./packages/*.nupkg" --source https://api.nuget.org/v3/index.json --skip-duplicate
+      run: dotnet nuget push "./packages/*.nupkg" --source https://api.nuget.org/v3/index.json --skip-duplicate --api-key ${{steps.login.outputs.NUGET_API_KEY}}
       continue-on-error: false
 
   deploy-npm:
