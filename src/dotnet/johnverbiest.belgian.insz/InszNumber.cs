@@ -114,7 +114,7 @@ public record InszNumber
     /// </remarks>
     /// <seealso cref="InszValidator"/>
     /// <seealso cref="IsValid"/>
-    public bool HasBeenValidated { get; internal init; } = false;
+    public bool HasBeenValidated { get; init; } = false;
     
     /// <summary>
     /// Gets or internally initializes a value indicating the validation status of the INSZ number.
@@ -136,7 +136,7 @@ public record InszNumber
     /// </remarks>
     /// <seealso cref="InszValidator"/>
     /// <seealso cref="HasBeenValidated"/>
-    public bool? IsValid { get; internal init; } = null;
+    public bool? IsValid { get; init; } = null;
     
     /// <summary>
     /// Gets a value indicating whether this is a BIS (Bis-nummer) number.
