@@ -1,4 +1,4 @@
-﻿name: Build and Test
+name: Build and Test
 
 on:
   push:
@@ -286,7 +286,6 @@ jobs:
   security:
     name: Security Scan
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
     
     steps:
     - name: Checkout code
@@ -305,7 +304,7 @@ jobs:
   deploy-nuget:
     name: Deploy to NuGet
     runs-on: ubuntu-latest
-    needs: [build-dotnet, package-validation, build-typescript]
+    needs: [build-dotnet, build-typescript, package-validation, code-quality-dotnet, security]
     if: github.ref == 'refs/heads/master' && github.event_name == 'push'
     environment: production
     permissions:
@@ -353,7 +352,7 @@ jobs:
   deploy-npm:
     name: Deploy to npm
     runs-on: ubuntu-latest
-    needs: [build-dotnet, build-typescript]
+    needs: [build-dotnet, build-typescript, package-validation, code-quality-dotnet, security]
     if: github.ref == 'refs/heads/master' && github.event_name == 'push'
     environment: production
     permissions:
