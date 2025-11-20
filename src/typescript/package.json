@@ -1,6 +1,6 @@
 {
   "name": "johnverbiest.belgian.insz",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "A robust typescript library for validating, parsing, and working with Belgian national identification numbers (INSZ/NISS/RRN/BIS). Provides comprehensive validation, data extraction (birth date, sex, BIS detection), and supports multiple input formats.",
   "main": "index.js",
   "types": "index.d.ts",
