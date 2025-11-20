@@ -358,6 +358,7 @@ jobs:
     permissions:
       contents: read
       packages: write
+      id-token: write   # REQUIRED for GitHub → npm OIDC
     
     steps:
     - name: Checkout code
