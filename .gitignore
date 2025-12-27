@@ -58,3 +58,4 @@ src/dotnet/packages/
 
 # .idea
 copilot*.xml
+/.idea/NationalNumber.Be.DotNet.iml
