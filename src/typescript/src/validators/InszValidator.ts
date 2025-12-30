@@ -100,6 +100,8 @@ export class InszValidator implements IInszValidator {
         const isRrn = monthPlaceHolder >= 0 && monthPlaceHolder <= 12
         const isSexKnown = isRrn || (monthPlaceHolder >= 40 && monthPlaceHolder <= 52);
         const isSexUnknown = monthPlaceHolder >= 20 && monthPlaceHolder <= 32;
+        const isRrnOnlyYearKnown = isRrn && monthPlaceHolder == 0 && day == 0;
+        const isRrnNothingKnown = isRrn && yearTwoDigits == 0 && monthPlaceHolder == 0 && day >=1 && day <=10;
         
         if (!(isSexKnown || isSexUnknown)) { // Invalid month
             return null;
@@ -131,6 +133,24 @@ export class InszValidator implements IInszValidator {
             } else { // Invalid day for bis
                 return null;
             }
+        }
+        
+        // Handle partially known date (RRN)
+        if (isRrnOnlyYearKnown) {
+            return {
+                isBis: !isRrn,
+                isSexUnknown: isSexUnknown,
+                birthYear: year,
+                birthDate: null
+            };
+        }
+        if (isRrnNothingKnown) {
+            return {
+                isBis: !isRrn,
+                isSexUnknown: isSexUnknown,
+                birthYear: null,
+                birthDate: null
+            };
         }
         
         // Validate full date
