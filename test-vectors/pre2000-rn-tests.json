@@ -80,6 +80,33 @@
       },
       "because": "Valid RN: 30/11/1950, seq 123 (odd), correct checksum (pre-2000)."
     },
+    {
+      "testName": "Valid female RN 1995 - Only year is known",
+      "testDescription": "Validates an RN where only the birth year is known (month and day are 00). This is a valid administrative encoding used when exact birth date is unknown.",
+      "input": "95000029254",
+      "expected": {
+        "isValid": true,
+        "isBis": false,
+        "birthDate": null,
+        "birthYear": 1995,
+        "sex": "F"
+      },
+      "because": "Valid RN: year 1995, month/day 00/00 (unknown date), seq 292 (even = female), correct checksum (pre-2000)."
+    },
+    {
+      "testName": "Valid female RN 1900 - Unknown birth date",
+      "testDescription": "Validates an RN where the birth date is completely unknown. Uses the administrative encoding 01/00/1900 as specified in the official documentation.",
+      "input": "00000129266",
+      "expected": {
+        "isValid": true,
+        "isBis": false,
+        "birthDate": null,
+        "birthYear": null,
+        "sex": "F"
+      },
+      "because": "Valid RN: 01/00/1900 (unknown birth date encoding), seq 292 (even = female), correct checksum (pre-2000)."
+    },
+
 
     {
       "testName": "Invalid short length",
@@ -223,19 +250,6 @@
         "sex": null
       },
       "because": "Invalid checksum: digits base are fine but control digits are wrong."
-    },
-    {
-      "testName": "Invalid month 00",
-      "testDescription": "Rejects month zero for RN (no BIS offset).",
-      "input": "85000000138",
-      "expected": {
-        "isValid": false,
-        "isBis": null,
-        "birthDate": null,
-        "birthYear": null,
-        "sex": null
-      },
-      "because": "Invalid month: 00 is not allowed for RN (and we are not using BIS fallbacks)."
     }
   ]
 }
