@@ -194,16 +194,16 @@ public class InszValidator: IInszValidator
             return (null, null); // skip date validation, date is unknown but valid
         }
         
+        // Special case for RR numbers with unknown date
+        if (!isBis && GetYearString(inszString) == "00" && month == 0 && day is 1)
+        {
+            return (null, null);
+        }
+        
         // Special case for RR numbers with known year but unknown month/day
         if (!isBis && month == 0 && day is >= 0 and <= 10)
         {
             return (null, year);
-        }
-        
-        // Special case for RR numbers with unknown date
-        if (!isBis && GetYearString(inszString) == "00" && month == 1 && day is >= 0 and <= 10)
-        {
-            return (null, null);
         }
 
         if (!DateTime.TryParseExact(
